@@ -20,16 +20,19 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
+
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+
 
 android {
     compileSdkVersion flutter.compileSdkVersion
@@ -59,7 +62,6 @@ android {
         versionName flutterVersionName
         multiDexEnabled true
     }
-
     signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias']
@@ -73,6 +75,7 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
 }
 
 flutter {

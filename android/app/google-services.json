@@ -14,10 +14,63 @@
       },
       "oauth_client": [
         {
-          "client_id": "804590897348-4c2an0pjbera0vo4740pj673un6v54ru.apps.googleusercontent.com",
+          "client_id": "804590897348-hs403rm49ncj4npa8euajpl761649qdm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.Ovation.magzgrowth",
+            "certificate_hash": "ab32e75b0a5f56347c57538e4f22d819843bbcd2"
+          }
+        },
+        {
+          "client_id": "804590897348-imqrcbeieb7ong4fettcan8l6pcleatp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.Ovation.magzgrowth",
+            "certificate_hash": "f4dce09dc019db688f05e36fe3c7b16377933b32"
+          }
+        },
+        {
+          "client_id": "804590897348-jnh2d19h6aaaabth6e67r2ron0koref2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.Ovation.magzgrowth",
+            "certificate_hash": "be0bb1c8b714f4124cc5e6521e2d5234c4d246da"
+          }
+        },
+        {
+          "client_id": "804590897348-rvog4j0lfaier2sg3493ahha75n22fud.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOxKCmCVTlloFXXsWguLztMAXGmVsiktI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "804590897348-rvog4j0lfaier2sg3493ahha75n22fud.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804590897348:android:faa0e499fc9b53679e6191",
+        "android_client_info": {
+          "package_name": "com.example.growmaxx_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "804590897348-bsm6bo2ur4tc4p5upargg172gab8c4mj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.growmaxx_admin",
             "certificate_hash": "f4dce09dc019db688f05e36fe3c7b16377933b32"
           }
         },
