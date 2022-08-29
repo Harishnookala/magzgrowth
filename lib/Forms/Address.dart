@@ -55,7 +55,7 @@ class _AddressState extends State<Address> {
             key: formKey,
                 child:Column(
                   children: [
-                    SizedBox(height: 25,),
+                    SizedBox(height: MediaQuery.of(context).size.height/16),
                     Divider(height: 1, thickness: 1.5, color: Colors.green.shade400),
                     Container(
                       margin: EdgeInsets.only(left: 14.3,top: 5.3),
@@ -118,7 +118,7 @@ class _AddressState extends State<Address> {
                             ),
                             buildMotherName(),
                             Container(
-                              margin: EdgeInsets.only(bottom: 8.5),
+                              margin: EdgeInsets.only(bottom: 8.5,top: 8.5),
                               child: const Text(
                                 "Address : -",
                                 style: TextStyle(

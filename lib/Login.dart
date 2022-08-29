@@ -61,8 +61,16 @@ class _LoginPageState extends State<LoginPage> {
                       flex: 1,
                       child: Container(),
                     ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 35),
+                      alignment: Alignment.topLeft,
+                      child: Text("Mobilenumber : - ",style: TextStyle(letterSpacing: 0.6,
+                        color: Colors.deepOrangeAccent,
+                        fontFamily: "Poppins-Medium",
+                        fontSize: 16)),),
+                    SizedBox(height: 10,),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 60.0, vertical: 20),
+                      padding: EdgeInsets.only(left: 25.3,right: 25.3,bottom: 12.3),
                       child: TextField(
                         style: TextStyle(
                             fontSize: 16.6,
@@ -74,23 +82,34 @@ class _LoginPageState extends State<LoginPage> {
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         decoration: InputDecoration(
-                          labelText: "Mobile Number",
-                          labelStyle: TextStyle(
-                              color: Colors.deepOrangeAccent,
-                              fontSize: 14,
-                              fontFamily: "Poppins-Light",
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.6),
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black)),
-                          enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.blueGrey)),
-                        ),
+                            contentPadding:  EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.tealAccent, width: 1.8),
+                            ),
+                            hintText: "Mobilenumber",
+                            labelText: "Mobilenumber",
+                            labelStyle: const TextStyle(color: Color(0xff576630)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(4.5),
+                            ),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.orange, width: 1.5),
+                            ),
+                            hintStyle: const TextStyle(color: Colors.brown)),
                       ),
                     ),
                     if (verificationId != null) ...[
+                      SizedBox(height: 20,),
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 35),
+                        alignment: Alignment.topLeft,
+                        child: Text("Otp : -",style: TextStyle(letterSpacing: 1.0,
+                            color: Colors.brown,
+                            fontFamily: "Poppins-Medium",
+                            fontSize: 16)),),
+                      SizedBox(height: 10,),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 60.0, vertical: 20),
+                        padding: EdgeInsets.only(left: 25.3,right: 25.3,bottom: 12.3),
                         child: TextField(
                           style: TextStyle(
                               fontSize: 16,
@@ -98,13 +117,20 @@ class _LoginPageState extends State<LoginPage> {
                               fontFamily: "Poppins-Medium"),
                           controller: _otp,
                           decoration: InputDecoration(
-
-                            labelText: "OTP",
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.black)),
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.blueGrey)),
-                          ),
+                              contentPadding:  EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+                              focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.tealAccent, width: 1.8),
+                              ),
+                              hintText: "Otp",
+                              labelText: "Otp",
+                              labelStyle: const TextStyle(color: Color(0xff576630)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4.5),
+                              ),
+                              enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.orange, width: 1.5),
+                              ),
+                              hintStyle: const TextStyle(color: Colors.brown)),
                         ),
                       )
                     ],

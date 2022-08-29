@@ -48,7 +48,7 @@ class InvestmentState extends State<Investment> {
           shrinkWrap: true,
           children: [
             Container(
-                margin: EdgeInsets.all(8.3),
+                margin: EdgeInsets.all(9.3),
                 child: Column(
                   children: [
                     Container(
@@ -63,176 +63,205 @@ class InvestmentState extends State<Investment> {
                             size: 19,
                           )),
                     ),
-                    Center(
-                      child: Column(
+                    Container(
+                      decoration: BoxDecoration(border: Border.all(color: Colors.green.shade500,width: 1.5)),
+                      child: ListView(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
                         children: [
                           Center(
-                              child: Container(
-                                  margin: const EdgeInsets.only(bottom: 3.5),
-                                  child: const Text(
-                                    "Available Amount",
-                                    style: TextStyle(
-                                      color: Colors.pink,
-                                      fontSize: 14,
-                                    ),
-                                  ))),
-                        ],
-                      ),
-                    ),
-                    FutureBuilder<DocumentSnapshot?>(
-                      future: authentication.get_invests(widget.username),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData && snapshot.requireData!.exists) {
-                          amount = snapshot.data;
-                          return Text(
-                            "₹ " + amount!.get("InvestAmount"),
-                            style: const TextStyle(
-                                color: Colors.blue,
-                                fontSize: 16,
-                                fontFamily: "Poppins-Medium"),
-                          );
-                        } else {
-                          return Text(
-                            "₹ 0.0",
-                            style: TextStyle(color: Colors.blue, fontSize: 16),
-                          );
-                        }
-                      },
-                    ),
-                    Divider(
-                      color: Colors.grey,
-                      thickness: 1.0,
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left: 10.3, top: 10.3),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            child: const Text(
-                              "Upi id : - ",
-                              style: TextStyle(
-                                  color: Colors.brown,
-                                  fontFamily: "Poppins-Medium"),
+                            child: Column(
+                              children: [
+                                SizedBox(height: 10,),
+                                Center(
+                                    child: Container(
+                                        margin: const EdgeInsets.only(bottom: 3.5),
+                                        child: const Text(
+                                          "Funds Available",
+                                          style: TextStyle(
+                                              color: Colors.pink,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: "Poppins-Medium"
+                                          ),
+                                        ))),
+                              ],
                             ),
                           ),
-                          Expanded(
-                              child: FutureBuilder<DocumentSnapshot>(
-                            future: upi,
+                          SizedBox(height: 5,),
+                          FutureBuilder<DocumentSnapshot?>(
+                            future: authentication.get_invests(widget.username),
                             builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                var details = snapshot.data;
-                                return Row(
-                                  children: [
-                                    Container(
-                                      margin: const EdgeInsets.only(right: 9.3),
-                                      child: Text(
-                                        details!.get("upi"),
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            color: Colors.blueAccent,
-                                            fontSize: 15,
-                                            fontFamily: "Poppins-Medium"),
-                                      ),
-                                    ),
-                                    Container(
-                                      child: InkWell(
-                                        child: const Icon(Icons.copy_all,
-                                            color: Colors.green, size: 28),
-                                        hoverColor: Colors.blueAccent,
-                                        highlightColor: Colors.blueAccent,
-                                        onTap: () {
-                                          Clipboard.setData(ClipboardData(
-                                              text: details.get("upi")));
-                                        },
-                                      ),
-                                    ),
-                                  ],
+                              if (snapshot.hasData && snapshot.requireData!.exists) {
+                                amount = snapshot.data;
+                                return Text(
+                                  "₹ " + amount!.get("InvestAmount"),
+                                  style: const TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 16,
+                                      fontFamily: "Poppins-Medium"),
+                                );
+                              } else {
+                                return Center(
+                                  child: Text(
+                                    "₹ 0.0",
+                                    style: TextStyle(color: Colors.blue, fontSize: 16,fontFamily: "Poppins-Medium"),
+                                  ),
                                 );
                               }
-                              return Container();
                             },
-                          ))
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                        child: TextButton(
-                            style: TextButton.styleFrom(
-                                minimumSize: Size(160, 38),
-                                backgroundColor: Colors.deepOrange.shade500,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.3))),
-                            onPressed: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return build_upi();
+                          ),
+                          Divider(
+                            color: Colors.grey,
+                            thickness: 1.0,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 10.3, top: 10.3),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  child:  Text(
+                                    "Upi id : - ".toUpperCase(),
+                                    style: TextStyle(
+                                        color: Colors.brown,
+                                        fontSize: 14,
+                                        fontFamily: "Poppins-Medium"),
+                                  ),
+                                ),
+                                Expanded(
+                                    child: FutureBuilder<DocumentSnapshot>(
+                                      future: upi,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          var details = snapshot.data;
+                                          return Row(
+                                            children: [
+                                              Container(
+                                                margin: const EdgeInsets.only(right: 9.3),
+                                                child: Text(
+                                                  details!.get("upi"),
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                      color: Colors.blueAccent,
+                                                      fontSize: 15.4,
+                                                      fontFamily: "Poppins-Medium"),
+                                                ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    child: InkWell(
+                                                      child: const Icon(Icons.copy_all,
+                                                          color: Colors.green, size: 28),
+                                                      hoverColor: Colors.blueAccent,
+                                                      highlightColor: Colors.blueAccent,
+                                                      onTap: () {
+                                                        Clipboard.setData(ClipboardData(
+                                                            text: details.get("upi")));
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          );
+                                        }
+                                        return Container();
+                                      },
+                                    ))
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          SizedBox(
+                              child: Center(
+                                child: TextButton(
+                                    style: TextButton.styleFrom(
+                                        minimumSize: Size(160, 38),
+                                        backgroundColor: Colors.deepOrange.shade500,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12.3))),
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return build_upi();
+                                        },
+                                      );
+                                    },
+                                    child: Text(
+                                      "Pay using Upi",
+                                      style:
+                                      TextStyle(color: Colors.white, fontSize: 15.6),
+                                    )),
+                              )),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Center(
+                            child: Container(
+                              child: const Text(
+                                "Add payment Screenshot : -",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.deepOrangeAccent,
+                                    letterSpacing: 0.6,
+                                    fontSize: 15.6,
+                                    fontFamily: "Poppins"),
+                              ),
+                              margin: const EdgeInsets.only(bottom: 8.5),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Center(
+                            child: buildScreenshot(),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Center(
+                            child: Container(
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                    minimumSize: Size(160, 30),
+                                    backgroundColor: Colors.green.shade500,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12.5))),
+                                onPressed: () {
+                                  if (image_url != null) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => payments(
+                                            phonenumber: widget.phonenumber,
+                                            username: widget.username,
+                                            image: image,
+                                          )),
+                                    );
+                                  }
                                 },
-                              );
-                            },
-                            child: Text(
-                              "Pay using Upi",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            ))),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      child: const Text(
-                        "Add payment Screenshot : -",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: Colors.deepOrangeAccent,
-                            letterSpacing: 0.6,
-                            fontSize: 15,
-                            fontFamily: "Poppins-Medium"),
-                      ),
-                      margin: const EdgeInsets.only(bottom: 8.5),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                      child: buildScreenshot(),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Container(
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                            minimumSize: Size(160, 30),
-                            backgroundColor: Colors.green.shade500,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.5))),
-                        onPressed: () {
-                          if (image_url != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => payments(
-                                        phonenumber: widget.phonenumber,
-                                        username: widget.username,
-                                        image: image,
-                                      )),
-                            );
-                          }
-                        },
-                        child: Text(
-                          "Continue",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontFamily: "Poppins-Medium"),
-                        ),
+                                child: Text(
+                                  "Continue",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontFamily: "Poppins-Medium"),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                        ],
                       ),
                     )
                   ],
@@ -413,13 +442,15 @@ class InvestmentState extends State<Investment> {
                   margin: EdgeInsets.only(bottom: 15.3),
                   child: TextButton(
                       style: TextButton.styleFrom(
+                        elevation: 1.0,
+                          minimumSize: Size(180, 40),
                           backgroundColor: Colors.purple.shade400),
                       onPressed: () {
                         get_permissions();
                       },
                       child: Text(
                         "Upload Screenshot",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.white,fontFamily: "Poppins",fontSize: 15),
                       )),
                 )
         ],

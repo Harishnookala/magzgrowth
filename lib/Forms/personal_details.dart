@@ -42,7 +42,7 @@ class _personal_detailsState extends State<personal_details> {
                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 20,),
+                    SizedBox(height: MediaQuery.of(context).size.height/16),
                     Divider(height: 1, thickness: 1.5, color: Colors.green.shade400),
                     Container(
                         margin: EdgeInsets.all(5.3),

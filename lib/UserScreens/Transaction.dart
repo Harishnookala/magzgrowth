@@ -42,16 +42,14 @@ class _TransactionState extends State<Transaction> {
          shrinkWrap: true,
         physics: BouncingScrollPhysics(),
         children: [
-          const SizedBox(
-            height: 30,
-          ),
+          SizedBox(height: MediaQuery.of(context).size.height/12),
           Container(
               alignment: Alignment.topLeft,
               margin: EdgeInsets.only(left: 5.3),
               child: const Text(
                 "Transactions",
                 style: TextStyle(
-                  fontSize: 15.5,
+                  fontSize: 18.5,
                     color: Colors.pinkAccent,
                     fontWeight: FontWeight.w400,
                     letterSpacing: 0.6),

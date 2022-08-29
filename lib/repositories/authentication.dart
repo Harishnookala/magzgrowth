@@ -31,6 +31,7 @@ class Authentication {
       final ref = FirebaseStorage.instance
           .ref("Profile_images/")
           .child(selecteditem! + ".jpeg");
+      print(imageFile);
       await ref.putFile(imageFile);
       var url = await ref.getDownloadURL();
       return url;

@@ -56,7 +56,6 @@ class HomeState extends State<Home> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                margin: const EdgeInsets.only(top: 8.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -263,7 +262,6 @@ class HomeState extends State<Home> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                margin: const EdgeInsets.only(top: 6.0),
                 child: Text(
                   "Welcome " + '${users!.get("firstname")}',
                   style: const TextStyle(
@@ -358,7 +356,7 @@ class HomeState extends State<Home> {
                                     letterSpacing: 0.9,
                                     color: Colors.amberAccent,
                                     fontWeight: FontWeight.w800,
-                                    fontFamily: "Poppins-Medium"))),
+                                    fontFamily: "Poppins"))),
                         const SizedBox(
                           height: 10,
                         ),
@@ -390,7 +388,7 @@ class HomeState extends State<Home> {
                         child: Text(
                       "Current Gains",
                       style: TextStyle(
-                          color: Colors.brown, fontFamily:"Poppins-Light",fontWeight: FontWeight.w900),
+                          color: Colors.brown, fontFamily:"Poppins",fontWeight: FontWeight.w900),
                     ))),
                 const SizedBox(
                   height: 8,
@@ -500,9 +498,9 @@ class HomeState extends State<Home> {
                 elevation: 0.2,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(6.6)),
-              backgroundColor: Colors.orange,
+              backgroundColor: Colors.orange.shade900,
             ),
-            onPressed: () async {
+            onPressed: ()  async {
               var bankDetails = await authentication.users(widget.phonenumber);
               String? username = bankDetails!.get("username");
               String? id = bankDetails.id;
@@ -519,6 +517,7 @@ class HomeState extends State<Home> {
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 15,
+                  letterSpacing: 0.6,
                   fontFamily: "Poppins-Medium"),
             ),
           ),

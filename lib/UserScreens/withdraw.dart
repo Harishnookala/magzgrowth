@@ -51,10 +51,11 @@ class _withdrawState extends State<withdraw> {
                               child: Container(
                                   margin: const EdgeInsets.only(bottom: 3.5),
                                   child: const Text(
-                                    "Available Amount",
+                                    "Funds Available Amount",
                                     style: TextStyle(
                                       color: Colors.pink,
-                                      fontSize: 14,
+                                      fontSize: 14.3,
+                                      fontFamily: "Poppins"
                                     ),
                                   ))),
                         ],
@@ -74,11 +75,12 @@ class _withdrawState extends State<withdraw> {
                                 fontFamily: "Poppins-Medium"),
                           );
                         }
-                        else if(snapshot.hasError){
-                          return Text("₹ 0.00",style: TextStyle(fontFamily: "Poppins-Light",fontSize: 16),);
-                        }return Center(
-                            widthFactor: 1.3,
-                            child: CircularProgressIndicator(color: Colors.lightGreenAccent,));
+                        else {
+                          return Text("₹ 0.00", style: const TextStyle(
+                              color: Colors.blue,
+                              fontSize: 16,
+                              fontFamily: "Poppins-Medium"),);
+                        }
 
                       },
                     ),
@@ -90,7 +92,7 @@ class _withdrawState extends State<withdraw> {
                       alignment: Alignment.topLeft,
                       child: const Text(
                         "Withdrawl Amount",
-                        style: TextStyle(color: Colors.deepOrange),
+                        style: TextStyle(color: Colors.deepOrange,fontFamily: "Poppins"),
                       ),
                     ),
                    Form(
@@ -177,7 +179,7 @@ class _withdrawState extends State<withdraw> {
 
                                child:  const Text(
                                  "Withdraw",
-                                 style: TextStyle(color: Colors.white),
+                                 style: TextStyle(color: Colors.white,fontSize:15, fontFamily: "Poppins"),
                                ),
                              ),
                              inprogress?const Padding(
@@ -189,7 +191,23 @@ class _withdrawState extends State<withdraw> {
                        ],
                      ),
                    ),
-                    pressed==false?Text("Available amount is greater than Debit Amount",style: TextStyle(color: Colors.red),):Text("")
+                    pressed==false?Text("Available amount is greater than Debit Amount",style: TextStyle(color: Colors.red),):Text(""),
+                    SizedBox(height: MediaQuery.of(context).size.height/5),
+                    SizedBox(
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 4.3),
+                            alignment: Alignment.topLeft,
+                            child: Text("Note : - ", style: TextStyle(fontFamily: "Poppins-Medium",fontSize: 15,color: Colors.black,fontWeight: FontWeight.w500),)),),
+                    ),
+                    SizedBox(
+                      child: Align(alignment: Alignment.bottomCenter,
+                           child: Text("For requests initiated before 4 PM Amount will be reaching your BANKACCOUNT on next Day." + "\n\n"+ "All Saturdays, Sundays Exchange Holidays Non working Days",
+                            style: TextStyle(fontFamily: "Poppins",fontSize: 14,color: Colors.blueGrey,fontWeight: FontWeight.w500),),
+                      ),
+                    ),
+
                   ],
                 )),
           ],
