@@ -12,6 +12,7 @@ Future<void> main() async{
   SharedPreferences prefsdata = await SharedPreferences.getInstance();
   var value = prefsdata.getBool("bank");
   var token = prefs.getString('phonenumber');
+  print(token);
   runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
       home: token==null?const SplashScreen():userPannel(phonenumber: token,pressed: value,)));

@@ -49,7 +49,7 @@ class _drawerState extends State<drawer> {
                         if (snapshot.hasData&&snapshot.requireData!.exists) {
                            users = snapshot.data!;
                           return Text(
-                            users.get("firstname"),
+                            users.get("Name"),
                             style: TextStyle(
                                 color: Colors.green.shade700,
                                 fontSize: 16,

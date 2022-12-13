@@ -1,23 +1,28 @@
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../UserScreens/userPannel.dart';
 import '../repositories/authentication.dart';
 import 'Address.dart';
 
 class personal_details extends StatefulWidget {
-  const personal_details({Key? key}) : super(key: key);
+  String?phonenumber;
+   personal_details({Key? key, this.phonenumber}) : super(key: key);
 
   @override
   _personal_detailsState createState() => _personal_detailsState();
 }
 
 class _personal_detailsState extends State<personal_details> {
-  TextEditingController mobileController = TextEditingController();
+  TextEditingController? mobileController;
   TextEditingController nameController = TextEditingController();
-  TextEditingController lastNameContoller =TextEditingController();
-
+  TextEditingController emailController =TextEditingController();
+  SharedPreferences? prefs ;
   bool? error = true;
   List gender = ['Male','Female'];
    List martialStatus = ["Married","Unmarried"];
@@ -28,7 +33,24 @@ class _personal_detailsState extends State<personal_details> {
   Authentication authentication = Authentication();
   bool login_success = false;
   final formKey = GlobalKey<FormState>();
-
+  @override
+    void initState() {
+    mobileController = TextEditingController();
+    mobileController!.text = widget.phonenumber!;
+    BackButtonInterceptor.add(myInterceptor);
+    // TODO: implement initState
+    super.initState();
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    mobileController!.dispose();
+    BackButtonInterceptor.remove(myInterceptor);
+    super.dispose();
+  }
+  bool myInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    return true;
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -67,13 +89,28 @@ class _personal_detailsState extends State<personal_details> {
                         scrollDirection: Axis.vertical,
                         children: [
                           Container(
+                            margin: const EdgeInsets.only(left:16.3,bottom: 8.5),
+                            child: const Text(
+                              "Mobile number : -",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.deepOrangeAccent,
+                                  fontSize: 15,
+                                  letterSpacing: 0.6,
+                                  fontFamily: "Poppins-Light"),
+                            ),
+                          ),
+                           Container(
+                             margin: EdgeInsets.only(left: 16.3,right: 16.3,bottom: 5.6),
+                             child: build_mobile(),),
+                          Container(
                             margin: const EdgeInsets.only(left: 16.3),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
                                   child: const Text(
-                                    "First Name : -",
+                                    "Name : -",
                                     style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.deepOrangeAccent,
@@ -87,77 +124,19 @@ class _personal_detailsState extends State<personal_details> {
                                 SizedBox(height: 5,),
                                 Container(
                                   child: const Text(
-                                    "Last Name : -",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.deepOrangeAccent,
-                                        fontSize: 15,
-                                        letterSpacing: 0.6,
-                                        fontFamily: "Poppins-Medium"),
-                                  ),
-                                  margin: EdgeInsets.only(bottom: 8.5),
-                                ),
-                                build_Lastname(),
-                                SizedBox(height: 5,),
-                                Container(
-                                  margin: const EdgeInsets.only(bottom: 8.5),
-                                  child: const Text(
-                                    "Mobile number : -",
+                                    "Email : -",
                                     style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.deepOrangeAccent,
                                         fontSize: 15,
-                                        letterSpacing: 0.6,
+                                        letterSpacing: 0.8,
                                         fontFamily: "Poppins-Light"),
                                   ),
-                                ),
-                                build_mobile(),
-                                SizedBox(height: 5,),
-                                Container(
-                                  child: const Text(
-                                    "Gender : -",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.deepOrangeAccent,
-                                        fontSize: 15,
-                                        letterSpacing: 0.6,
-                                        fontFamily: "Poppins-Medium"),
-                                  ),
-                                  margin: EdgeInsets.only(bottom: 8.5,top: 4.6),
-                                ),
-                                buildGender(),
-                                Container(
-                                  child: const Text(
-                                    "Date of Birth : -",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.deepOrangeAccent,
-                                        fontSize: 15,
-                                        letterSpacing: 0.6,
-                                        fontFamily: "Poppins-Medium"),
-                                  ),
-                                  margin: EdgeInsets.only(bottom: 8.5,top: 5.6),
-                                ),
-                                build_dateofbirth(),
-                                Container(
-                                  child: const Text(
-                                    "Martial Status : -",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.deepOrangeAccent,
-                                        fontSize: 15,
-                                        letterSpacing: 0.6,
-                                        fontFamily: "Poppins-Medium"),
-                                  ),
-                                  margin: EdgeInsets.only(bottom: 8.5,top: 5.6),
-                                ),
-                                build_martialstatus(),
-                                SizedBox(height: 20,),
-                                error==true?Container():Center(
-                                  child: Text("User is already registered",
-                                    style: TextStyle(color: Colors.red,fontFamily: "Poppins"),),
+                                  margin: EdgeInsets.only(bottom: 8.5),
                                 ),
                                 SizedBox(height: 5,),
+                                build_email(),
+                                SizedBox(height: 8,),
                                 build_button(),
 
                               ],
@@ -194,8 +173,8 @@ class _personal_detailsState extends State<personal_details> {
             focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.tealAccent, width: 1.8),
             ),
-            hintText: "First Name",
-            labelText: "First Name",
+            hintText: " Enter Name",
+            labelText: " Name",
             labelStyle: const TextStyle(color: Color(0xff576630)),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(4.5),
@@ -208,46 +187,15 @@ class _personal_detailsState extends State<personal_details> {
     );
   }
 
-  build_Lastname() {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width/1.2,
-      child: TextFormField(
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        style: TextStyle(fontFamily: "Poppins-Light",),
-        validator: (lastname){
-          if(lastname==null||lastname.isEmpty){
-            return "please enter name";
-          }
-          return null;
-        },
-        controller: lastNameContoller,
-        decoration: InputDecoration(
-            contentPadding:  EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.tealAccent, width: 1.8),
-            ),
-            hintText: "Last Name",
-            labelText: "Last Name",
-            labelStyle: const TextStyle(color: Color(0xff576630)),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(4.5),
-            ),
-            enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Color(0xcc9fce4c), width: 1.5),
-            ),
-            hintStyle: const TextStyle(color: Colors.brown)),
-      ),
-    );
-
-  }
   build_mobile() {
     return SizedBox(
       width: MediaQuery.of(context).size.width/1.2,
       child: TextFormField(
+        readOnly: true,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         keyboardType: TextInputType.number,
         decoration: InputDecoration(
-            contentPadding:  EdgeInsets.symmetric(vertical: 18.0, horizontal: 10.0),
+            contentPadding:  EdgeInsets.symmetric(vertical: 18.0, horizontal: 8.0),
             focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.tealAccent, width: 1.8),
             ),
@@ -263,7 +211,9 @@ class _personal_detailsState extends State<personal_details> {
             hintStyle: const TextStyle(color: Colors.brown)),
         controller:mobileController,
         cursorColor: Colors.orange,
-        style: const TextStyle(color: Colors.deepPurpleAccent),
+        style: const TextStyle(color: Colors.grey,fontFamily: "Poppins",
+            letterSpacing: 1.0,
+        ),
         validator: (phone) {
           bool validate = validatePhone(phone!);
           if (phone.isEmpty) {
@@ -278,219 +228,6 @@ class _personal_detailsState extends State<personal_details> {
       ),
     );
   }
-
-  buildGender() {
-    return SizedBox(
-      height: 53,
-      width: MediaQuery.of(context).size.width/1.2,
-      child: Container(
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton2(
-            isExpanded: true,
-            hint: Row(
-              children:  [
-                SizedBox(
-                  width: 4,
-                ),
-                Expanded(
-                  child: Text(
-                    'Select Gender',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.brown,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-            items: gender
-                .map((item) => DropdownMenuItem<String>(
-              value: item,
-              child: Text(
-                item,
-                style:  TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ))
-                .toList(),
-            style: TextStyle(color: Colors.black54,fontFamily: "Poppins-Medium",fontWeight: FontWeight.w900),
-            value: selected_value,
-            onChanged: (value) {
-              setState(() {
-                selected_value = value as String;
-              });
-            },
-            icon: const Icon(
-              Icons.arrow_drop_down,
-              color: Colors.black,
-            ),
-            iconSize: 25,
-            iconEnabledColor: Color(0xcc9fce4c),
-            buttonHeight: 80,
-            buttonWidth: 160,
-            buttonPadding: const EdgeInsets.only(left: 14, right: 14),
-            buttonDecoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                width: 1.8,
-                color: Color(0xcc9fce4c),
-              ),
-              color: Colors.white),
-            itemHeight: 40,
-            itemPadding: const EdgeInsets.only(left: 14, right: 14),
-            dropdownMaxHeight: 200,
-            dropdownWidth: 250,
-            dropdownPadding: null,
-            dropdownDecoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
-              color: Colors.white,
-            ),
-            dropdownElevation: 8,
-            scrollbarRadius: const Radius.circular(40),
-            scrollbarThickness: 6,
-            scrollbarAlwaysShow: true,
-            offset: const Offset(20, 0),
-          ),
-        ),
-      ),
-
-
-    );
-  }
-
-  build_dateofbirth() {
-    return SizedBox(
-      height: 53,
-      width: MediaQuery.of(context).size.width/1.2,
-      child: Container(
-        decoration:  BoxDecoration(border: Border.all(color: Color(0xcc9fce4c)),borderRadius: BorderRadius.circular(4.3)),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-         date==null?  Container(
-           margin: EdgeInsets.only(left: 16.3),
-           alignment: Alignment.center,
-           child: Text("Select Date",style: TextStyle(color: Colors.brown,
-               fontSize:14,fontFamily: "Poppins-Light"),),):
-           Container(
-               margin: EdgeInsets.only(left: 16.3),
-               child: Text(date!,style: TextStyle(color: Colors.black,fontSize: 14,fontFamily: "Poppins-Light"),)),
-          Container(
-            margin: EdgeInsets.only(right: 16.3),
-            alignment: Alignment.centerRight,
-            child: InkWell(
-              child: Icon(Icons.date_range_outlined,color: Colors.blue),
-              onTap: ()async{
-                  pickupDate = await showDatePicker(context: context,
-                    initialDate:
-                    DateTime.now(),
-                    firstDate:
-                    DateTime(1890),
-                    lastDate:
-                    DateTime.now(),);
-                   setState(() {
-                      date = DateFormat('dd / MMM / yyy').format(pickupDate!);
-
-                   });
-                  },
-            ),
-          ),
-
-        ],
-      ),
-      ),
-    );
-  }
-
-  build_martialstatus() {
-    return SizedBox(
-      height: 53,
-      width: MediaQuery.of(context).size.width/1.2,
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton2(
-          isExpanded: true,
-          hint: Row(
-            children:  const [
-              SizedBox(
-                width: 4,
-              ),
-              Expanded(
-                child: Text(
-                  'Select status',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.brown,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          items: martialStatus
-              .map((item) => DropdownMenuItem<String>(
-            value: item,
-            child: Text(
-              item,
-              style:  TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ))
-              .toList(),
-          style: TextStyle(color: Colors.black54,fontFamily: "Poppins-Medium",fontWeight: FontWeight.w900),
-          value: status,
-          onChanged: (value) {
-            setState(() {
-              status = value as String;
-            });
-          },
-          icon: const Icon(
-            Icons.arrow_drop_down,
-            color: Colors.black,
-          ),
-          iconSize: 25,
-          iconEnabledColor: Color(0xcc9fce4c),
-          buttonHeight: 80,
-          buttonWidth: 160,
-          buttonPadding: const EdgeInsets.only(left: 14, right: 14),
-          buttonDecoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                width: 1.8,
-                color: Color(0xcc9fce4c),
-              ),
-              color: Colors.white),
-          itemHeight: 40,
-          itemPadding: const EdgeInsets.only(left: 14, right: 14),
-          dropdownMaxHeight: 200,
-          dropdownWidth: 250,
-          dropdownPadding: null,
-          dropdownDecoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            color: Colors.white,
-          ),
-          dropdownElevation: 8,
-          scrollbarRadius: const Radius.circular(40),
-          scrollbarThickness: 6,
-          scrollbarAlwaysShow: true,
-          offset: const Offset(20, 0),
-        ),
-      ),
-    );
-
-  }
-
-
-
-
   build_button() {
     return Container(
       alignment: Alignment.center,
@@ -502,25 +239,21 @@ class _personal_detailsState extends State<personal_details> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.6)),
         ),
         onPressed: () async {
-          var user  = await get_data(mobileController.text);
-             if(formKey.currentState!.validate()&&date!=null&&selected_value!=null&&status!=null){
-              setState(() {
-                if(user==null){
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) =>
-                        Address(firstname:nameController.text,
-                          lastname:lastNameContoller.text,
-                          gender: selected_value,
-                          birth_date:date,
-                          phonenumber:mobileController.text,
-                          married_status:status,
-                        )),
-                  );
-                }
-                else{
-                  error = false;
-                }
-              });
+          prefs = await SharedPreferences.getInstance();
+             if(formKey.currentState!.validate()){
+                Map<String,dynamic> details = {
+                  "Name" : nameController.text,
+                  "mobilenumber" : widget.phonenumber,
+                  "email" : emailController.text
+                };
+                await FirebaseFirestore.instance.collection("Users").add(details);
+                prefs!.setString('phonenumber', widget.phonenumber!);
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (BuildContext context) {
+                      return userPannel(
+                        phonenumber: widget.phonenumber,
+                      );
+                    }));
              }
            },
         child: Container(
@@ -528,8 +261,8 @@ class _personal_detailsState extends State<personal_details> {
            height: 25,
            alignment: Alignment.center,
            margin: EdgeInsets.only(left: 5.3,right: 5.3),
-            child: Text("Continue",
-              style: TextStyle(fontSize:16,color: Colors.white,
+            child: Text("Submit",
+              style: TextStyle(fontSize:17.5,color: Colors.white,
                   fontFamily: "Poppins-Medium"),)),
       ),
     );
@@ -553,6 +286,41 @@ class _personal_detailsState extends State<personal_details> {
       }
     }
     return null;
+  }
+
+  build_email() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width/1.2,
+      child: TextFormField(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        style: TextStyle(fontFamily: "Poppins-Light",),
+        validator: (email){
+          if(email==null||email.isEmpty){
+            return "please enter Email";
+          }
+          else if(!EmailValidator.validate(emailController.text)&&email.isNotEmpty){
+            return "Please enter valid Email Address";
+          }
+          return null;
+        },
+        controller: emailController,
+        decoration: InputDecoration(
+            contentPadding:  EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+            focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.tealAccent, width: 1.8),
+            ),
+            hintText: "Enter email address",
+            labelText: "Email",
+            labelStyle: const TextStyle(color: Color(0xff576630)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4.5),
+            ),
+            enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xcc9fce4c), width: 1.5),
+            ),
+            hintStyle: const TextStyle(color: Colors.brown)),
+      ),
+    );
   }
 }
 

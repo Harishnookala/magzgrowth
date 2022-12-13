@@ -44,7 +44,7 @@ class HomeState extends State<Home> {
   bool myInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     return true;
   }
-
+ List<Column> children =[];
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -78,10 +78,12 @@ class HomeState extends State<Home> {
                       future: authentication.users(widget.phonenumber),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          var users = snapshot.data;
+                          DocumentSnapshot<Object?>? users = snapshot.data;
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [get_name(users)],
+                             children: [
+                               get_name(users)
+                             ],
                           );
                         }
                         return Container(
@@ -190,7 +192,6 @@ class HomeState extends State<Home> {
                     future: authentication.bank_inf(widget.phonenumber),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-
                         var details = snapshot.data;
                         if (details!.get("status") == "Accept") {
                           return Column(
@@ -238,9 +239,6 @@ class HomeState extends State<Home> {
                                 )),
                           );
                         }
-                      }else if(!snapshot.hasData){
-
-                        return Container(child: get_data(),);
                       }return Container();
 
                     })
@@ -252,9 +250,9 @@ class HomeState extends State<Home> {
     );
   }
 
-  get_name(DocumentSnapshot<Object?>? users) {
+    get_name(users) {
     return Container(
-      margin: const EdgeInsets.only(left: 12.3, right: 12.3),
+      margin: const EdgeInsets.only(left: 12.3, right: 12.3,top: 12.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -263,11 +261,11 @@ class HomeState extends State<Home> {
             children: [
               Container(
                 child: Text(
-                  "Welcome " + '${users!.get("firstname")}',
+                  "Welcome , " + '${users!.get("Name")}',
                   style: const TextStyle(
                       color: Colors.deepOrange,
                       fontSize: 15,
-                      fontFamily: "Poppins-Medium"),
+                      fontFamily: "Poppins"),
                 ),
               ),
               Container(
@@ -284,12 +282,7 @@ class HomeState extends State<Home> {
               ),
             ],
           ),
-          ProfilePicture(
-            name: users.get("lastname"),
-            radius: 42,
-            fontsize: 16,
-            img: users.get("image"),
-          )
+
         ],
       ),
     );

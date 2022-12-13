@@ -1,7 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'main_screen.dart';
+import 'package:magzgrowth/Login.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -16,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(
         const Duration(seconds: 10),
             () => Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => mainScreen())));
+            builder: (BuildContext context) => LoginPage())));
   }
   @override
   Widget build(BuildContext context) {

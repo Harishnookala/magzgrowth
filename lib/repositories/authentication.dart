@@ -98,7 +98,7 @@ class Authentication {
     var User = await FirebaseFirestore.instance.collection("Users").get();
     for (int i = 0; i < User.docs.length; i++) {
       id = User.docs[i].id;
-      if (id != null && User.docs[i].get('mobilenumber') == phonenumber) {
+      if ( User.docs[i].data()["mobilenumber"] == phonenumber) {
         if (User.docs[i].exists) {
           var details = await FirebaseFirestore.instance
               .collection("Users")

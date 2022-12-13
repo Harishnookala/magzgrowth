@@ -1,10 +1,9 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'Forms/personal_details.dart';
 import 'UserScreens/userPannel.dart';
 
@@ -21,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   String errorMessage = "";
   bool error = false;
   User? user;
-  SharedPreferences? prefsdata;
+  SharedPreferences? prefs;
   String? status;
   var id;
   var mobilenumber;
@@ -36,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
     BackButtonInterceptor.remove(myInterceptor);
     super.dispose();
   }
+
   bool myInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     return true;
   }
@@ -45,393 +45,395 @@ class _LoginPageState extends State<LoginPage> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
           body: Center(
-        child: Container(
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              Container(
-                height: MediaQuery.of(context).size.height,
-                child: Column(
-                  children: [
-                    Expanded(flex: 1,child: Container(),),
-                    Text("Welcome", style: Theme.of(context).textTheme.headline5),
-                    Text("Please Login First",
-                        style: Theme.of(context).textTheme.headline5),
-                    Expanded(
-                      flex: 1,
-                      child: Container(),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 35),
-                      alignment: Alignment.topLeft,
-                      child: Text("Mobilenumber : - ",style: TextStyle(letterSpacing: 0.6,
-                        color: Colors.deepOrangeAccent,
-                        fontFamily: "Poppins-Medium",
-                        fontSize: 16)),),
-                    SizedBox(height: 10,),
-                    Padding(
-                      padding: EdgeInsets.only(left: 25.3,right: 25.3,bottom: 12.3),
-                      child: TextField(
-                        style: TextStyle(
-                            fontSize: 16.6,
-                            color: Colors.black,
-                            fontFamily: "Poppins-Light"),
-                        controller: _mobile,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        decoration: InputDecoration(
-                            contentPadding:  EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.tealAccent, width: 1.8),
-                            ),
-                            hintText: "Mobilenumber",
-                            labelText: "Mobilenumber",
-                            labelStyle: const TextStyle(color: Color(0xff576630)),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(4.5),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.orange, width: 1.5),
-                            ),
-                            hintStyle: const TextStyle(color: Colors.brown)),
-                      ),
-                    ),
-                    if (verificationId != null) ...[
-                      SizedBox(height: 20,),
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 35),
-                        alignment: Alignment.topLeft,
-                        child: Text("Otp : -",style: TextStyle(letterSpacing: 1.0,
-                            color: Colors.brown,
-                            fontFamily: "Poppins-Medium",
-                            fontSize: 16)),),
-                      SizedBox(height: 10,),
-                      Padding(
-                        padding: EdgeInsets.only(left: 25.3,right: 25.3,bottom: 12.3),
-                        child: TextField(
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey.shade600,
-                              fontFamily: "Poppins-Medium"),
-                          controller: _otp,
-                          decoration: InputDecoration(
-                              contentPadding:  EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
-                              focusedBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.tealAccent, width: 1.8),
-                              ),
-                              hintText: "Otp",
-                              labelText: "Otp",
-                              labelStyle: const TextStyle(color: Color(0xff576630)),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(4.5),
-                              ),
-                              enabledBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.orange, width: 1.5),
-                              ),
-                              hintStyle: const TextStyle(color: Colors.brown)),
+            child: Container(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Container(),
                         ),
-                      )
-                    ],
-                    verificationId!=null?Container(
-                      padding: EdgeInsets.only(bottom: 13),
-                      margin: EdgeInsets.symmetric(horizontal: 40),
-                      alignment: Alignment.topRight,
-                      child: GestureDetector(
-                        onTap: (){
-                          get_otp(verificationId);
-                        },
-                        child: const Text("Resend Otp",style: TextStyle(color: Colors.pinkAccent,
-                            fontSize: 16,
-                            decoration: TextDecoration.underline,fontWeight: FontWeight.w600),),
-                      ),
-                    ):Container(),
-                    GestureDetector(
-
-                      onTap: () async {
-                         get_data();
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                        decoration: BoxDecoration(
-                            color: Colors.green.shade400,
-                            borderRadius: BorderRadius.all(const Radius.circular(5.0))),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              (this.verificationId == null)
-                                  ? "Send OTP"
-                                  : "Validate OTP",
-                              style: Theme.of(context).textTheme.headline6,
+                        Text("Welcome",
+                            style: Theme.of(context).textTheme.headline5),
+                        Text("Please Login First",
+                            style: Theme.of(context).textTheme.headline5),
+                        SizedBox(height: 40,),
+                        Padding(
+                          padding: EdgeInsets.only(left: 25.3, right: 25.3),
+                          child: TextField(
+                            style: TextStyle(fontSize: 16.6,
+                                color: Colors.black,
+                                fontFamily: "Poppins-Light"),
+                            controller: _mobile,
+                            keyboardType: TextInputType.phone,
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            decoration: InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 15.0, horizontal: 20.0),
+                                focusedBorder:  OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.lightGreen, width: 1.8),
+                                    borderRadius: BorderRadius.circular(12.0)
+                                ),
+                                hintText: "Enter your mobile number",
+                                labelText: " Phonenumber",
+                                labelStyle: const TextStyle(
+                                    color: Colors.black, fontSize: 13.6,
+                                    letterSpacing: 1.0,
+                                   fontFamily: "Poppins-Light"
+                                ),
+                                enabledBorder:  OutlineInputBorder(
+                                  borderSide:
+                                  BorderSide(color: Colors.greenAccent, width: 1.5),
+                                  borderRadius: BorderRadius.circular(13.5),),
+                                hintStyle: const TextStyle(
+                                    color: Colors.brown, fontSize: 13,
+                                    fontFamily: "Poppins-Medium")),
+                          ),
+                        ),
+                        verificationId==null?SizedBox(height: 20,):Container(),
+                        if (verificationId != null) ...[
+                          SizedBox(
+                            height: 7.5,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 25.3, right: 25.3, bottom: 12.3),
+                            child: TextField(
+                              style: TextStyle(fontSize: 16,
+                                  color: Colors.black,
+                                  fontFamily: "Poppins-Light"),
+                              controller: _otp,
+                              decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 15.0, horizontal: 20.0),
+                                  focusedBorder:  OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.lightGreen, width: 1.8),
+                                      borderRadius: BorderRadius.circular(12.0)
+                                  ),
+                                  hintText: "Enter Otp",
+                                  labelText: "Otp",
+                                  labelStyle:
+                                  TextStyle(color: Color(0xcc576630),fontSize: 15.6,
+                                      fontFamily: "poppins-Medium",letterSpacing: 1.0),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(35.0),),
+                                  enabledBorder:  OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Color(0xff5E099BEA), width: 2.0),
+                                      borderRadius:BorderRadius.circular(12.0)
+                                  ),
+                                  hintStyle: const TextStyle(color: Colors.brown,
+                                      fontSize: 13,fontFamily: "Poppins-Medium")),
                             ),
-                            inProgress
-                                ? Padding(
+                          )
+                        ],
+                        verificationId != null
+                            ? Container(
+                          padding: EdgeInsets.only(bottom: 13),
+                          margin: EdgeInsets.symmetric(horizontal: 40),
+                          alignment: Alignment.topRight,
+                          child: GestureDetector(
+                            onTap: () {
+                              get_otp(verificationId);
+                            },
+                            child: const Text(
+                              "Resend Otp",
+                              style: TextStyle(
+                                  color: Colors.pinkAccent,
+                                  fontSize: 16,
+                                  decoration: TextDecoration.underline,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        )
+                            : Container(),
+                        GestureDetector(
+                          onTap: () async {
+                            get_data();
+                          },
+                          child: Container(
+                            padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 8.5),
+                            decoration: BoxDecoration(
+                                color: Colors.blue.shade700,
+                                borderRadius:
+                                BorderRadius.all(const Radius.circular(20.0))),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text((this.verificationId == null)
+                                        ? "Send OTP"
+                                        : "Validate OTP",
+                                    style: TextStyle(
+                                        fontSize: 15.6,
+                                        color: Colors.white,
+                                        fontFamily: "Poppins-Medium",
+                                        fontWeight: FontWeight.w600)),
+                                inProgress
+                                    ? Padding(
                                     padding: EdgeInsets.only(left: 10),
                                     child: CircularProgressIndicator())
-                                : Container()
-                          ],
+                                    : Container()
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
+                        Padding(
+                            padding:
+                            EdgeInsets.symmetric(vertical: 14, horizontal: 5),
+                            child: Text(
+                              errorMessage,
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(
+                                  color: Colors.red,
+                                  fontFamily: "Poppins-Medium"),
+                              textAlign: TextAlign.center,
+                            )),
+                        Expanded(
+                          child: Container(),
+                          flex: 1,
+                        ),
+                      ],
                     ),
-                    Padding(
-                        padding: EdgeInsets.symmetric(vertical: 14, horizontal: 5),
-                        child: Text(
-                          errorMessage,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(color: Colors.red,fontFamily: "Poppins-Medium"),
-                          textAlign: TextAlign.center,
-                        )),
-
-                     TextButton(
-                         style: TextButton.styleFrom(
-                           minimumSize: Size(150, 40),
-                           elevation: 2.0,
-                           backgroundColor: Colors.deepOrange.shade600,
-                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.3))
-                         ),
-                         onPressed: (){
-                            Navigator.of(context).pushReplacement(
-                               MaterialPageRoute(
-                                   builder: (BuildContext context) {
-                                     return personal_details();
-                                   }));
-                         }, child: Text("Signup",style:
-                     TextStyle(color: Colors.white,
-                         fontFamily: "Poppins-Light",
-                         fontSize: 16.5,
-                          fontWeight: FontWeight.w900,
-                     ),)),
-                    Expanded(
-                      child: Container(),
-                      flex: 1,
-                    ),
-
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-      )),
+            ),
+          )),
     );
   }
 
   String? phoneValidator(String input) {
     final String regexSource = r'[0-9]{10}';
     RegExp regExp = RegExp(regexSource);
-    if (input == null || input.trim().isEmpty)
+    if (input.trim().isEmpty)
       return "Please enter valid phone number";
-    if (!regExp.hasMatch(input)&&input.length!=10) return "Please enter valid phone number";
+    if (!regExp.hasMatch(input) && input.length != 10)
+      return "Please enter valid phone number";
     return null;
   }
 
-   get_data() async{
-     prefsdata = await SharedPreferences.getInstance();
-
-     setState(() {
-       errorMessage = "";
-       error = false;
-     });
-
-     var Users = await FirebaseFirestore.instance.collection("Users").get();
-
-     for(int i =0;i<Users.docs.length;i++){
-       if(Users.docs[i].get("mobilenumber")==_mobile.text){
-         id = Users.docs[i].id;
-         mobilenumber = Users.docs[i].get("mobilenumber");
-       }
-     }
-      if(id!=null){
-        id = id;
-        mobilenumber = mobilenumber;
-      }
-      else{
-        id = null;
-      }
-     FirebaseAuth auth = FirebaseAuth.instance;
-     if (phoneValidator(_mobile.text) != null) {
-       setState(() {
-         errorMessage = phoneValidator(_mobile.text)!;
-         error = true;
-       });
-       return;
-     }
-     else if(id==null){
-
-       setState(() {
-         errorMessage = "User is not registered";
-         error = true;
-       });
-       return;
-     }
-     if (verificationId == null) {
-       setState(() {
-         inProgress = true;
-       });
-       await FirebaseAuth.instance.verifyPhoneNumber(
-         phoneNumber: '+91' + _mobile.text,
-         verificationCompleted: (PhoneAuthCredential credential) async {
-
-            var userCredential = await auth.signInWithCredential(credential);
-            var user = userCredential.user!.providerData[0].phoneNumber;
-              if(user!=null){
-                prefsdata!.setString('phonenumber', _mobile.text);
-                 Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                        builder: (BuildContext context) {
-                          return userPannel(
-                            id: id,
-                            phonenumber: mobilenumber,
-                          );
-                        }));
+  get_data() async {
+    prefs = await SharedPreferences.getInstance();
+    bool validate = false;
+    var id;
+    setState(() {
+      errorMessage = "";
+      error = false;
+    });
+    FirebaseAuth auth = FirebaseAuth.instance;
+    var users = await FirebaseFirestore.instance.collection("Users").get();
+    if (phoneValidator(_mobile.text) != null) {
+      setState(() {
+        errorMessage = phoneValidator(_mobile.text)!;
+        error = true;
+      });
+      return;
+    }
+    if (verificationId == null) {
+      setState(() {
+        inProgress = true;
+      });
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: '+91' + _mobile.text,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          var userCredential = await auth.signInWithCredential(credential);
+          var user = userCredential.user!.providerData[0].phoneNumber;
+          if (user!=null) {
+            for(int i =0;i<users.docs.length;i++){
+              if(users.docs[i].data()["mobilenumber"]==_mobile.text){
+                validate = true;
+                id = users.docs[i].id;
               }
-            },
-         verificationFailed: (FirebaseAuthException e) {
+            }
+            if(validate){
+              print("Second Time");
+              prefs!.setString('phonenumber', _mobile.text);
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    return userPannel(id: id,
+                      phonenumber: _mobile.text,);
+                  }));
+            }else{
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    return personal_details(
+                      phonenumber: _mobile.text,
+                    );
+                  }));
+            }
+          }
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          setState(() {
+            inProgress = true;
+            errorMessage = e.message!;
+            error = true;
+          });
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          setState(() {
+            errorMessage = "Please enter the OTP sent to your mobile number.";
+            error = false;
+            inProgress = false;
+            this.verificationId = verificationId;
+          });
+        },
+        codeAutoRetrievalTimeout: (String? verificationId) {},
+      );
+    } else {
+      if (this.verificationId != null) {
+        if (_otp.text.isEmpty || _otp.text.length < 6) {
+          setState(() {
+            errorMessage =
+            "Please enter a valid OTP.\nIt should be at least 6 digits.";
+          });
+          return;
+        }
+        setState(() {
+          inProgress = true;
+        });
+        PhoneAuthCredential credential = PhoneAuthProvider.credential(
+            verificationId: verificationId!, smsCode: _otp.text);
+        try {
+          UserCredential user = await auth.signInWithCredential(credential);
+          if (user.user!=null) {
+            for(int i =0;i<users.docs.length;i++){
+              if(users.docs[i].data()["mobilenumber"]==_mobile.text){
+                validate = true;
+                id = users.docs[i].data()["id"];
+              }
+            }
+            if(validate){
+              prefs!.setString('phonenumber', _mobile.text);
+              print("Second Time");
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    return userPannel(
+                      id: id,
+                      phonenumber: _mobile.text,
+                    );
+                  }));
+            }else{
+              print("First Time");
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    return personal_details(
+                      phonenumber: _mobile.text,
+                    );
+                  }));
+            }
+          }
+          if (user.user!.phoneNumber != null) {
+            setState(() {
+              inProgress = false;
+            });
+          }
+        } catch (e) {
+          setState(() {
+            inProgress = false;
+            errorMessage = "Failed to validate OTP";
+          });
+        }
+      }
+    }
+  }
 
-           setState(() {
-             inProgress = true;
-             errorMessage = e.message!;
-             error = true;
-           });
-         },
-         codeSent: (String verificationId, int? resendToken) {
-           setState(() {
-             errorMessage =
-             "Please enter the OTP sent to your mobile number.";
-             error = false;
-             inProgress = false;
-             this.verificationId = verificationId;
-           });
-         },
-         codeAutoRetrievalTimeout: (String? verificationId) {
-         },
-       );
-     } else {
-       if (this.verificationId != null) {
-         if (_otp.text.isEmpty || _otp.text.length < 6) {
-           setState(() {
-             errorMessage =
-             "Please enter a valid OTP.\nIt should be at least 6 digits.";
-           });
-           return;
-         }
-         setState(() {
-           inProgress = true;
-         });
-         PhoneAuthCredential credential =
-         PhoneAuthProvider.credential(
-             verificationId: verificationId!,
-             smsCode: _otp.text);
+  get_otp(String? verificationId) async {
+    prefs = await SharedPreferences.getInstance();
+    bool validate = false;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    var users = await FirebaseFirestore.instance.collection("Users").get();
+    if (verificationId != null) {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: '+91' + _mobile.text,
+        timeout: const Duration(seconds: 20),
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          var userCredential = await auth.signInWithCredential(credential);
+          var user = userCredential.user!.providerData[0].phoneNumber;
 
-         try {
-           UserCredential user =
-               await auth.signInWithCredential(credential);
-           prefsdata!.setString('phonenumber', _mobile.text);
-           Navigator.of(context).pushReplacement(
-               MaterialPageRoute(
-                   builder: (BuildContext context) {
-                     return userPannel(
-                       id: id,
-                       phonenumber: _mobile.text,
-                     );
-                   }));
-           if (user.user!.phoneNumber != null) {
-             setState(() {
-               inProgress = false;
-             });
-           }
-         } catch (e) {
-           setState(() {
-             inProgress = false;
-             errorMessage = "Failed to validate OTP";
-           });
-         }
-       }
-     }
-   }
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          setState(() {
+            errorMessage = e.message!;
+            error = true;
+          });
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          setState(() {
+            errorMessage = "Please enter the OTP sent to your mobile number.";
+            error = false;
+            inProgress = false;
+            this.verificationId = verificationId;
+          });
+        },
+        codeAutoRetrievalTimeout: (String? verificationId) {},
+      );
+    } else {
+      if (this.verificationId != null) {
+        if (_otp.text.isEmpty || _otp.text.length < 6) {
+          setState(() {
+            errorMessage =
+            "Please enter a valid OTP.\nIt should be at least 6 digits.";
+          });
+          return;
+        }
 
-   get_otp(String? verificationId) async {
-     prefsdata = await SharedPreferences.getInstance();
-     FirebaseAuth auth =FirebaseAuth.instance;
-     if (verificationId != null) {
-       await FirebaseAuth.instance.verifyPhoneNumber(
-         phoneNumber: '+91' + _mobile.text,
-         timeout: const Duration(seconds: 20),
-         verificationCompleted: (PhoneAuthCredential credential) async {
+        PhoneAuthCredential credential = PhoneAuthProvider.credential(
+            verificationId: verificationId!, smsCode: _otp.text);
 
-           var userCredential = await auth.signInWithCredential(credential);
-           var user = userCredential.user!.providerData[0].phoneNumber;
-           if(user!=null){
-             prefsdata!.setString('phonenumber', _mobile.text);
-             Navigator.of(context).pushReplacement(
-                 MaterialPageRoute(
-                     builder: (BuildContext context) {
-                       return userPannel(
-                         id: id,
-                         phonenumber: mobilenumber,
-                       );
-                     }));
-           }
-         },
-         verificationFailed: (FirebaseAuthException e) {
-           setState(() {
-             errorMessage = e.message!;
-             error = true;
-           });
-         },
-         codeSent: (String verificationId, int? resendToken) {
-           setState(() {
-             errorMessage =
-             "Please enter the OTP sent to your mobile number.";
-             error = false;
-             inProgress = false;
-             this.verificationId = verificationId;
-           });
-         },
-         codeAutoRetrievalTimeout: (String? verificationId) {
-         },
-       );
-     } else {
-       if (this.verificationId != null) {
-         if (_otp.text.isEmpty || _otp.text.length < 6) {
-           setState(() {
-             errorMessage =
-             "Please enter a valid OTP.\nIt should be at least 6 digits.";
-           });
-           return;
-         }
-
-         PhoneAuthCredential credential =
-         PhoneAuthProvider.credential(
-             verificationId: verificationId!,
-             smsCode: _otp.text);
-
-         try {
-           UserCredential user =
-               await auth.signInWithCredential(credential);
-           Navigator.of(context).pushReplacement(
-               MaterialPageRoute(
-                   builder: (BuildContext context) {
-                     return userPannel(
-                       id:id,
-                         phonenumber:_mobile.text
-                     );
-                   }));
-           if (user.user!.phoneNumber != null) {
-             setState(() {
-               inProgress = false;
-             });
-           }
-         } catch (e) {
-           setState(() {
-             errorMessage = "Failed to validate OTP";
-           });
-         }
-       }
-     }
-   }
+        try {
+          UserCredential user = await auth.signInWithCredential(credential);
+          if (user != null) {
+            for(int i =0;i<users.docs.length;i++){
+              if(users.docs[i].data()["mobilenumber"]==_mobile.text){
+                validate = true;
+                id = users.docs[i].id;
+              }
+            }
+            if(validate){
+              prefs!.setString('phonenumber', _mobile.text);
+              print("Second Time");
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    return userPannel(
+                      id: id,
+                      phonenumber: _mobile.text,
+                    );
+                  }));
+            }else{
+              print("First Time");
+              print(_mobile.text);
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    return personal_details(
+                      phonenumber: _mobile.text,
+                    );
+                  }));
+            }
+          }
+          if (user.user!.phoneNumber != null) {
+            setState(() {
+              inProgress = false;
+            });
+          }
+        } catch (e) {
+          setState(() {
+            errorMessage = "Failed to validate OTP";
+          });
+        }
+      }
+    }
+  }
 }

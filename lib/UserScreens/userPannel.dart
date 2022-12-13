@@ -94,7 +94,7 @@ class userPannelState extends State<userPannel> {
                 icon: Icon(Icons.menu_sharp),
               ),
               BottomNavigationBarItem(
-                label: 'Profile',
+                label: 'Account',
                 icon: Icon(Icons.person),
               ),
             ],
