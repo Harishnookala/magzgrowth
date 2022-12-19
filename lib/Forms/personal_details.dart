@@ -1,14 +1,11 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../UserScreens/userPannel.dart';
 import '../repositories/authentication.dart';
-import 'Address.dart';
 
 class personal_details extends StatefulWidget {
   String?phonenumber;
@@ -244,7 +241,8 @@ class _personal_detailsState extends State<personal_details> {
                 Map<String,dynamic> details = {
                   "Name" : nameController.text,
                   "mobilenumber" : widget.phonenumber,
-                  "email" : emailController.text
+                  "email" : emailController.text,
+                  "image" : "",
                 };
                 await FirebaseFirestore.instance.collection("Users").add(details);
                 prefs!.setString('phonenumber', widget.phonenumber!);

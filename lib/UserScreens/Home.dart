@@ -1,16 +1,12 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_profile_picture/flutter_profile_picture.dart';
-
 import 'package:intl/intl.dart';
 import 'package:magzgrowth/UserScreens/profits.dart';
 import 'package:magzgrowth/UserScreens/withdraw.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Forms/bank_details.dart';
 import '../repositories/authentication.dart';
 import 'Investment.dart';
-
 
 class Home extends StatefulWidget {
   String? id;
@@ -44,7 +40,7 @@ class HomeState extends State<Home> {
   bool myInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     return true;
   }
- List<Column> children =[];
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -144,7 +140,7 @@ class HomeState extends State<Home> {
                             ),
                             Container(
                               child: get_profit(),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -159,8 +155,7 @@ class HomeState extends State<Home> {
                                       borderRadius:
                                           BorderRadius.circular(25.3))),
                               onPressed: () async {
-                                var details = await authentication
-                                    .bank_inf(widget.phonenumber);
+                                var details = await authentication.bank_inf(widget.phonenumber);
                                 Timestamp? date = details!.get("Currentdate");
                                 Navigator.of(context).push(
                                     MaterialPageRoute(
@@ -188,60 +183,6 @@ class HomeState extends State<Home> {
                 const SizedBox(
                   height: 40,
                 ),
-                FutureBuilder<DocumentSnapshot?>(
-                    future: authentication.bank_inf(widget.phonenumber),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        var details = snapshot.data;
-                        if (details!.get("status") == "Accept") {
-                          return Column(
-                            children: [
-                              build_data(),
-                              const SizedBox(
-                                height: 40,
-                              ),
-                              build_Investments()
-                            ],
-                          );
-                        } else if (details.get("status") == "pending") {
-                          return const Center(
-                              child: Text(
-                            "--- Your bank_details status is pending --- ",
-                            style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 14.6,
-                                fontFamily: "Poppins-Medium"),
-                          ));
-                        } else if (details.get("status") == "Reject") {
-                          return Center(
-                            child: TextButton(
-                                style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.all(12.3),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25.3),
-                                    ),
-                                    backgroundColor: Colors.green),
-                                onPressed: () async {
-                                  Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              BankAccount(
-                                                  phonenumber:
-                                                      widget.phonenumber,
-                                                  id: widget.id)));
-                                },
-                                child: const Text(
-                                  " + Add Bank Details",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                      letterSpacing: 0.6),
-                                )),
-                          );
-                        }
-                      }return Container();
-
-                    })
               ],
             ),
           )
@@ -282,41 +223,9 @@ class HomeState extends State<Home> {
               ),
             ],
           ),
-
         ],
       ),
     );
-  }
-  get_data() {
-    return widget.pressed==null?FutureBuilder<DocumentSnapshot?>(
-      future: authentication.bank_inf(widget.phonenumber),
-      builder: (context,snapshot){
-        if(!snapshot.hasData&&snapshot.data==null){
-          return Center(
-            child:TextButton(
-                style: TextButton.styleFrom(
-                    padding: const EdgeInsets.all(12.3),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.3),
-                    ),
-                    backgroundColor: Colors.green),
-                onPressed: () async {
-                  var value = await get_results (widget.phonenumber);
-                  if(value!=null){
-                  }
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => BankAccount(
-                          phonenumber: widget.phonenumber, id: widget.id)));
-                },
-                child: const Text(
-                  " + Add Bank Details",
-                  style: TextStyle(
-                      color: Colors.white, fontSize: 15, letterSpacing: 0.6),
-                )),
-          );
-        }return Container();
-      },
-    ):Container();
   }
 
   build_data() {
@@ -534,13 +443,10 @@ class HomeState extends State<Home> {
                         id: id)),
               );
             },
-            child: const Text(
-              " + Invest More",
-              style: TextStyle(
+            child:Text(" + Invest More", style: TextStyle  (
                   color: Colors.white,
                   fontSize: 15,
-                  fontFamily: "Poppins-Medium"),
-            ),
+                  fontFamily: "Poppins-Medium"),),
           ),
         ],
       ),
@@ -572,19 +478,4 @@ class HomeState extends State<Home> {
       },
     );
   }
-
-  get_results(String? phonenumber) async{
-    var data  = await FirebaseFirestore.instance.collection("bank_details").get();
-    for(int i =0;i<data.docs.length;i++){
-      if(data.docs[i].exists){
-        if(data.docs[i].get("phonenumber")==phonenumber){
-         return data.docs[i].id;
-        }
-      }else{
-        return null;
-      }
-    }
-  }
-
-
 }

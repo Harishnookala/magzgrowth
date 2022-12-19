@@ -222,3 +222,37 @@ class UpperCaseTextFormatter extends TextInputFormatter {
     );
   }
 }
+
+
+class TextIcon extends StatelessWidget{
+  Icon? icon;
+  Color? color;
+  Text? title;
+  Function? onTap;
+   Widget? leading;
+  ListTileStyle? listTileStyle;
+  double? fontsize;
+  EdgeInsets? margin;
+  FontWeight? fontWeight;
+  String? hint_text;
+  String? fontFamily;
+  Color? Iconcolor;
+  Color?titlecolor;
+  TextIcon({this.icon,this.color,this.onTap,this.leading,this.listTileStyle,
+    this.fontsize,this.margin,this.fontWeight,this.title,this.fontFamily,
+    this.hint_text,this.Iconcolor,this.titlecolor});
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return ListTile(
+      title:title ,
+      style:listTileStyle ,
+      onTap:(){},
+      leading: leading,
+      iconColor:Iconcolor,
+      tileColor: titlecolor,
+
+    );
+  }
+
+}
