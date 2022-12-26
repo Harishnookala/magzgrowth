@@ -420,7 +420,6 @@ class _Pan_deatilsState extends State<Pan_deatils> {
         width: 120,
         child: DropdownButtonHideUnderline(
           child: DropdownButton2(
-            customItemsHeight: 12.3,
             isExpanded: true,
             hint: Row(
               children: [

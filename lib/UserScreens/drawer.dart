@@ -36,25 +36,20 @@ class _drawerState extends State<drawer> {
               children: [
                 Row(
                   children: [
-                    Text(
-                      "Hi ,",
-                      style: TextStyle(
+                    Text("Hi ,", style: TextStyle(
                           color: Colors.green.shade700,
                           fontSize: 16,
-                          fontFamily: "Poppins-Medium"),
-                    ),
+                          fontFamily: "Poppins-Medium"),),
                     FutureBuilder<DocumentSnapshot?>(
                       future: authentication.users(widget.phonenumber),
                       builder: (context, snapshot) {
                         if (snapshot.hasData&&snapshot.requireData!.exists) {
                            users = snapshot.data!;
-                          return Text(
-                            users.get("Name"),
+                          return Text(users.get("Name"),
                             style: TextStyle(
                                 color: Colors.green.shade700,
                                 fontSize: 16,
-                                fontFamily: "Poppins-Medium"),
-                          );
+                                fontFamily: "Poppins-Medium"),);
                         }
                         return Container();
                       },
@@ -73,14 +68,11 @@ class _drawerState extends State<drawer> {
                         fontFamily: "Poppins-Medium"),
                   ),
                 ),
-                Divider(
-                  color: Colors.grey.shade500,
-                  thickness: 1.0,
-                ),
+                Divider(color: Colors.grey.shade500,
+                  thickness: 1.0,),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     Row(
                       children: [
                         TextButton(
@@ -93,12 +85,10 @@ class _drawerState extends State<drawer> {
                                   builder: (BuildContext context) =>
                                       pending_requests(phonenumber: widget.phonenumber)));
                             },
-                            child: Text(
-                              "Pending requests",
+                            child: Text("Pending requests",
                               style: TextStyle(
                                   color: Colors.lightBlueAccent,
-                                  fontFamily: "Poppins-Medium"),
-                            )),
+                                  fontFamily: "Poppins-Medium"),)),
                       ],
                     ),
                     SizedBox(height: 30,),
@@ -107,20 +97,18 @@ class _drawerState extends State<drawer> {
                       child: TextButton(
                           style: TextButton.styleFrom(
                             backgroundColor: Colors.orange.shade400,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.3)),
-                            minimumSize: Size(120, 30)
-                          ),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.3)),
+                               minimumSize: Size(120, 30)),
                           onPressed: () async {
                             SharedPreferences prefs = await SharedPreferences.getInstance();
                             await prefs.clear();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LoginPage()),
-                            );
-                          }, child: Text("Log Out",style:
-                      TextStyle(color: Colors.white,fontSize: 16,
+                            Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) => LoginPage()),);
+                          }, child: Text("Log Out",
+                        style: TextStyle(color: Colors.white,fontSize: 16,
                           fontFamily: "Poppins-Medium"),)),
+
                     )
                   ],
                 )
