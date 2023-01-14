@@ -296,7 +296,7 @@ class _personal_detailsState extends State<personal_details> {
           if(email==null||email.isEmpty){
             return "please enter Email";
           }
-          else if(!EmailValidator.validate(emailController.text)&&email.isNotEmpty){
+          else if(!EmailValidator.validate(emailController.text.trim())&&email.isNotEmpty){
             return "Please enter valid Email Address";
           }
           return null;

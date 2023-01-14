@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:magzgrowth/UserScreens/userPannel.dart';
 
 import '../repositories/authentication.dart';
@@ -23,6 +24,8 @@ class _withdrawState extends State<withdraw> {
   bool pressed = true;
   final formKey = GlobalKey<FormState>();
    bool inprogress = false;
+  var formatter = NumberFormat('#,##0.${"#" * 5}');
+
   _withdrawState({this.id});
   @override
   Widget build(BuildContext context) {
@@ -49,7 +52,7 @@ class _withdrawState extends State<withdraw> {
                         children: [
                           Center(
                               child: Container(
-                                  margin: const EdgeInsets.only(bottom: 3.5),
+                                  margin: const EdgeInsets.only(bottom: 13.5),
                                   child: const Text(
                                     "Funds Available Amount",
                                     style: TextStyle(
@@ -58,31 +61,9 @@ class _withdrawState extends State<withdraw> {
                                       fontFamily: "Poppins"
                                     ),
                                   ))),
+                          build_data(),
                         ],
                       ),
-                    ),
-                    FutureBuilder<DocumentSnapshot?>(
-                      future: authentication.investments(widget.phonenumber),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData && snapshot.requireData!.exists) {
-                           amount = snapshot.data;
-                           amount!.get("InvestAmount");
-                          return Text(
-                            amount!.get("InvestAmount"),
-                            style: const TextStyle(
-                                color: Colors.blue,
-                                fontSize: 16,
-                                fontFamily: "Poppins-Medium"),
-                          );
-                        }
-                        else {
-                          return Text("₹ 0.00", style: const TextStyle(
-                              color: Colors.blue,
-                              fontSize: 16,
-                              fontFamily: "Poppins-Medium"),);
-                        }
-
-                      },
                     ),
                     const SizedBox(
                       height: 20,
@@ -192,7 +173,7 @@ class _withdrawState extends State<withdraw> {
                      ),
                    ),
                     pressed==false?Text("Available amount is greater than Debit Amount",style: TextStyle(color: Colors.red),):Text(""),
-                    SizedBox(height: MediaQuery.of(context).size.height/5),
+                    SizedBox(height: MediaQuery.of(context).size.height/9),
                     SizedBox(
                       child: Align(
                         alignment: Alignment.bottomCenter,
@@ -216,17 +197,119 @@ class _withdrawState extends State<withdraw> {
     );
   }
 
-  bool ?get_data(double investamount, double debit) {
-    if(investamount>=debit){
-      return true;
-    }
-    else{
-      return false;
-    }
+
+
+  build_data() {
+    return Container(
+      margin: const EdgeInsets.only(left: 12.3, right: 12.3),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(left: 12.3),
+            decoration: BoxDecoration(
+                color: Colors.lightGreenAccent.shade200,
+                borderRadius: BorderRadius.circular(5.3)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                    width: MediaQuery.of(context).size.width / 2.59,
+                    margin: const EdgeInsets.only(
+                        top: 5.3, bottom: 3.3, left: 3.3, right: 5.3),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Center(
+                            child: Text("Current Balance",
+                                style: TextStyle(
+                                    letterSpacing: 0.9,
+                                    color: Colors.black,
+                                    fontFamily: "Poppins"))),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Center(
+                          child: get_invests(),
+                        ),
+                      ],
+                    )),
+                const SizedBox(
+                  height: 5,
+                ),
+              ],
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+                color: Colors.lightGreenAccent.shade200,
+                borderRadius: BorderRadius.circular(5.3)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                    width: MediaQuery.of(context).size.width /2.8,
+                    margin: const EdgeInsets.only(
+                        top: 5.3, bottom: 3.3, left: 3.3,),
+                    child:  Center(
+                        child: Text(
+                          "Current Profit",
+                          style: TextStyle(
+                            color: Colors.black, fontFamily:"Poppins",
+                            letterSpacing: 1.0,
+                          ),
+                        ))),
+                const SizedBox(
+                  height: 8,
+                ),
+                get_gains(),
+                const SizedBox(
+                  height: 8,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  get_invests() {
+    return Container(
+    );
+  }
+  get_total(List<DocumentSnapshot<Object?>?>? details) {
+    double total=0.0;
+    for(int i =0;i<details!.length;i++){
+      total = total +details[i]!.get("Portfolio");
+    }return total;
+  }
+  get_gains() {
+    return FutureBuilder<DocumentSnapshot?>(
+      future: authentication.get_curentgains(widget.phonenumber),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.requireData!.exists) {
+          var gains = snapshot.data;
+          var afterFormat = formatter.format(double.parse(
+              gains!.get("CurrentGains").replaceAll(",", "")));
+          return Row(
+            children: [
+              const Text(
+                "₹",
+                style: TextStyle(color: Colors.white),
+              ),
+              Text(" ₹ $afterFormat",
+                style: const TextStyle(color: Colors.green,
+                    fontFamily: "Poppins-Medium"
+                ),)
+            ],
+          );
+        }
+        return Center();
+      },
+    );
   }
 
-  get_name() async{
-    var user_name = await FirebaseFirestore.instance.collection("Users").doc(id).get();
-    return user_name.get("username");
-  }
 }

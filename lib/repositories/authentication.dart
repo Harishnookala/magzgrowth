@@ -61,7 +61,6 @@ class Authentication {
     var bank_details =
         await FirebaseFirestore.instance.collection("bank_details").get();
     var id;
-
     for (int i = 0; i < bank_details.docs.length; i++) {
       id = bank_details.docs[i].id;
       if (bank_details.docs[i].get("phonenumber") == phonenumber) {
@@ -112,45 +111,89 @@ class Authentication {
       }
     }
   }
-  Future<DocumentSnapshot?>?nominee(String?phonenumber) async{
-    var nominee_details = await FirebaseFirestore.instance.collection("nominee").get();
-    var mobilenumber;
+  Future<DocumentSnapshot?>nominee(String?phonenumber) async{
+    var nominee_details =
+    await FirebaseFirestore.instance.collection("nominee").get();
     var id;
-      for(int j=0;j<nominee_details.docs.length;j++){
-        mobilenumber = nominee_details.docs[j].get("userPhoneNumber");
-        if(mobilenumber == phonenumber){
-           id = nominee_details.docs[j].id;
-           var details = await FirebaseFirestore.instance
-               .collection("nominee")
-               .doc(id.toString())
-               .get();
-           return details;
+
+    for (int i = 0; i < nominee_details.docs.length; i++) {
+      id = nominee_details.docs[i].id;
+      if (nominee_details.docs[i].get("userPhoneNumber") == phonenumber) {
+        if (nominee_details.docs[i].exists) {
+          var nominee_details = await FirebaseFirestore.instance
+              .collection("nominee")
+              .doc(id)
+              .get();
+          return nominee_details;
+        }else{
+            return null;
         }
-        if(id==null){
-          return null;
-        }
-       }
-  }
-  Future<DocumentSnapshot?> kyc_details(String? phonenumber) async {
-    var details = await FirebaseFirestore.instance.collection("Kyc_details").get();
-    var id;
-    for(int i=0;i<details.docs.length;i++){
-      if(details.docs[i].get("phonenumber")==phonenumber){
-          id = details.docs[i].id;
-         if(details.docs[i].exists){
-           var kyc_details = await FirebaseFirestore.instance.collection("Kyc_details").doc(id).get();
-           return kyc_details;
-         }
-      }
-      if (id == null) {
-        return null;
       }
     }
-    return null;
+  }
+  Future<DocumentSnapshot?>? kyc_details(String? phonenumber) async {
+    var kyc_details =
+    await FirebaseFirestore.instance.collection("Kyc_details").get();
+    var id;
+
+    for (int i = 0; i < kyc_details.docs.length; i++) {
+      if (kyc_details.docs[i].get("phonenumber") == phonenumber) {
+        id = kyc_details.docs[i].id;
+        if (kyc_details.docs[i].exists) {
+          var kyc_details = await FirebaseFirestore.instance
+              .collection("Kyc_details")
+              .doc(id)
+              .get();
+          return kyc_details;
+        }else{
+            return null;
+        }
+      }
+    }
   }
 
+  Future<DocumentSnapshot?> get_investments(String phonenumber)async{
+    var details = await FirebaseFirestore.instance.collection("razor_investments").get();
+    var id;
+   var razorpayments;
+    for(int i =0;i<details.docs.length;i++){
+      if(details.docs[i].get("phonenumber")==phonenumber){
+         id = details.docs[i].id.toString();
+         if(details.docs[i].exists){
+            razorpayments= await FirebaseFirestore.instance
+               .collection("razor_investments")
+               .doc(id)
+               .get();
+         }
+      }
+    }
 
+    return razorpayments;
+  }
 
+  Future<DocumentSnapshot> get_profit(String?phonenumber) async{
+     var details = await FirebaseFirestore.instance.collection("Profit").get();
+     var id;
+     var profits;
+     for(int i=0;i<details.docs.length;i++){
+       if(details.docs[i].get("phonenumber")==phonenumber){
+         id  = details.docs[i].id.toString();
+         if(details.docs[i].exists){
+           profits= await FirebaseFirestore.instance.collection("Profit").doc(id).get();
+         }
+       }
+     }
+     return profits;
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
   Future<DocumentSnapshot?> get_invests(String? username) async {
     var id;
     var investments =
@@ -171,12 +214,7 @@ class Authentication {
     return null;
   }
 
-  Stream<DocumentSnapshot>? get_profit() async* {
-    var dates = DateFormat('yyy-dd-MMM').format(DateTime.now());
-    var profit =
-        await FirebaseFirestore.instance.collection("Admin").doc(dates).get();
-    yield profit;
-  }
+
 
   Future<DocumentSnapshot?> get_curentgains(String? phonenumber) async {
     var id;
@@ -207,15 +245,5 @@ class Authentication {
     }
   }
 
-  Future<String> username(String? phonenumber) async {
-    var username;
-    var bank_details =
-        await FirebaseFirestore.instance.collection("bank_details").get();
-    for (int i = 0; i < bank_details.docs.length; i++) {
-      if (bank_details.docs[i].get("phonenumber") == phonenumber) {
-        username = bank_details.docs[i].get("username");
-      }
-    }
-    return username;
-  }
+ 
 }

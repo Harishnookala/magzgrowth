@@ -183,7 +183,7 @@ class nomineeState extends State<nominee> {
         fontFamily: "Poppins",
       ),
       validator: (value) {
-        if (value == null || value.isEmpty || value.isNum) {
+        if (value == null || value.isEmpty || value.length==10) {
           return 'Please enter phone';
         }
         return null;

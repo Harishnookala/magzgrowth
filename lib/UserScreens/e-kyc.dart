@@ -52,10 +52,18 @@ class _kyc_detailsState extends State<kyc_details> {
             builder: (context,snapshot){
               if(snapshot.hasData){
                  var details = snapshot.data;
+                 print(details!.data());
                  return Container(
-                   decoration: BoxDecoration(border: Border.all(color: Colors.tealAccent,width: 2.0)),
+                   decoration: BoxDecoration(border: Border.all(color: Colors.tealAccent,width: 1.54)),
                    child: Column(
                      children: [
+                       Container(
+                           child: Text("Kyc_details",style: TextStyle(fontFamily: "Poppins",
+                               fontSize: 15,color: Colors.deepOrange),),
+                        margin: EdgeInsets.only(top: 6.3,left: 12.3),
+                         alignment: Alignment.topLeft,
+                       ),
+                       Divider(color: Colors.tealAccent,thickness: 1.54),
                        Container(
                          child: Row(
                            children: [
@@ -71,7 +79,7 @@ class _kyc_detailsState extends State<kyc_details> {
                              ),
                              Container(
                                child: Text(
-                                 details!.get("aadhaar"),
+                                 details.get("aadhaar"),
                                  style: TextStyle(
                                      color: Colors.black,
                                      letterSpacing: 0.6,

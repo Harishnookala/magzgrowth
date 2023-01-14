@@ -4,9 +4,11 @@ import 'package:editable_image/editable_image.dart';
 import 'package:flutter/material.dart';
 import 'package:magzgrowth/Custom_widgets/wrappers.dart';
 import 'package:magzgrowth/UserScreens/shown_nominee_details.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Forms/bank_details.dart';
 import '../Forms/kyc_details.dart';
 import '../Forms/nominee_details.dart';
+import '../Login.dart';
 import '../repositories/authentication.dart';
 import 'banking.dart';
 import 'e-kyc.dart';
@@ -27,6 +29,7 @@ class _ProfileState extends State<Profile> {
   Authentication authentication = Authentication();
   File? _profilePicFile;
   var pressed =false;
+  bool color = false;
   void _directUpdateImage(File? file) async {
     var details = await authentication.users(widget.phoneNumber);
 
@@ -42,6 +45,13 @@ class _ProfileState extends State<Profile> {
        };
        await FirebaseFirestore.instance.collection("Users").doc(details!.id.toString()).update(images);
      }
+  }
+  @override
+  void initState() {
+    color=false;
+    print(color);
+    // TODO: implement initState
+    super.initState();
   }
   @override
   Widget build(BuildContext context) {
@@ -138,26 +148,32 @@ class _ProfileState extends State<Profile> {
   }
 
   build_buttons(Authentication authentication) {
+    print(color);
     return Column(
       children: [
-        TextIcon(
-          leading: Icon(Icons.dataset_linked_sharp,color: Colors.black,),
-          title: Text("e-Kyc ",style: TextStyle(fontFamily: "Poppins",fontWeight: FontWeight.w500)),
-          onTap: () async{
-            var details = await authentication.kyc_details(phoneNumber);
-            if(details!.data()!=null){
-              Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          kyc_details(phonenumber: phoneNumber,)));
-            }else{
-              Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          kyc(phonenumber: phoneNumber,)));
-            }
+        Container(
+            color: color==false?Colors.white:Colors.grey.shade400,
+          child: TextIcon(
+            leading: Icon(Icons.dataset_linked_sharp,color: Colors.black,),
+            title: Text("e-Kyc ",style: TextStyle(fontFamily: "Poppins",fontWeight: FontWeight.w500)),
+            onTap: () async{
+              var details = await authentication.kyc_details(phoneNumber);
+              if(details!=null){
+                Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            kyc_details(phonenumber: phoneNumber,)));
+              }else{
+                Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            kyc(phonenumber: phoneNumber,)));
+              }
+              pressed =true;
 
-          },
+
+            },
+          ),
         ),
         TextIcon(
           leading: Icon(Icons.account_balance,color: Colors.black),
@@ -165,21 +181,17 @@ class _ProfileState extends State<Profile> {
           onTap: ()async{
             var details = await authentication.users(phoneNumber);
             var bank = await authentication.bank_inf(phoneNumber);
-            if(bank!.data()!=null){
-              //Account details
+            if(bank!=null){
               Navigator.of(context).push(
                   MaterialPageRoute(
                       builder: (BuildContext context) =>
                           Banking(phoneNumber: details!.get("mobilenumber"),bank_id: bank.id,)));
-
             }else{
               Navigator.of(context).push(
                   MaterialPageRoute(
                       builder: (BuildContext context) =>
                           BankAccount(phonenumber:details!.get("mobilenumber"))));
-              //bank details form
             }
-
           },
         ),
         TextIcon(
@@ -187,6 +199,7 @@ class _ProfileState extends State<Profile> {
             title: Text("Add Nominee",style: TextStyle(fontFamily: "Poppins",fontWeight: FontWeight.w500)),
             onTap: ()async{
               var details = await authentication.nominee(widget.phoneNumber);
+
               if(details!=null){
                 Navigator.of(context).push(
                     MaterialPageRoute(
@@ -212,6 +225,19 @@ class _ProfileState extends State<Profile> {
           title: Text("Privacy Policy",style: TextStyle(fontFamily: "Poppins",fontWeight: FontWeight.w500)),
           onTap: () {
 
+          },
+        ),
+
+        TextIcon(
+          leading: Icon(Icons.logout_rounded,color: Colors.black,),
+          title: Text("Logout",style: TextStyle(fontFamily: "Poppins",fontWeight: FontWeight.w500,
+              letterSpacing: 0.6,
+              fontSize: 16)),
+          onTap: () async {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.clear();
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context) => LoginPage()),);
           },
         )
       ],

@@ -242,8 +242,6 @@ class InvestmentState extends State<Investment> {
                                       MaterialPageRoute(
                                           builder: (context) => payments(
                                             phonenumber: widget.phonenumber,
-                                            username: widget.username,
-                                            image: image,
                                           )),
                                     );
                                   }

@@ -233,7 +233,6 @@ class _LoginPageState extends State<LoginPage> {
       error = false;
     });
     FirebaseAuth auth = FirebaseAuth.instance;
-    var users = await FirebaseFirestore.instance.collection("Users").get();
     if (phoneValidator(_mobile.text) != null) {
       setState(() {
         errorMessage = phoneValidator(_mobile.text)!;
@@ -251,6 +250,7 @@ class _LoginPageState extends State<LoginPage> {
           var userCredential = await auth.signInWithCredential(credential);
           var user = userCredential.user!.providerData[0].phoneNumber;
           if (user!=null) {
+            var users = await FirebaseFirestore.instance.collection("Users").get();
             for(int i =0;i<users.docs.length;i++){
               if(users.docs[i].data()["mobilenumber"]==_mobile.text){
                 validate = true;
@@ -309,7 +309,9 @@ class _LoginPageState extends State<LoginPage> {
         try {
           UserCredential user = await auth.signInWithCredential(credential);
           if (user.user!=null) {
+            var users = await FirebaseFirestore.instance.collection("Users").get();
             for(int i =0;i<users.docs.length;i++){
+
               if(users.docs[i].data()["mobilenumber"]==_mobile.text){
                 validate = true;
                 id = users.docs[i].data()["id"];

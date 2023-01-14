@@ -240,9 +240,11 @@ class TextIcon extends StatelessWidget{
   Color? Iconcolor;
   Color?titlecolor;
   Color?hovercolor;
+  Color?selectedcolor;
+  Color?selected;
   TextIcon({this.icon,this.color,this.onTap,this.leading,this.listTileStyle,
     this.fontsize,this.margin,this.fontWeight,this.title,this.fontFamily,
-    this.hint_text,this.Iconcolor,this.titlecolor,this.hovercolor});
+    this.hint_text,this.Iconcolor,this.titlecolor,this.hovercolor,this.selectedcolor,this.selected});
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -254,6 +256,9 @@ class TextIcon extends StatelessWidget{
       iconColor:Iconcolor,
       tileColor: titlecolor,
       hoverColor: hovercolor,
+      selectedTileColor: selectedcolor,
+      enabled: true,
+      selectedColor: selected,
     );
   }
 

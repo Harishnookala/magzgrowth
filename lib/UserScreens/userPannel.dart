@@ -45,19 +45,6 @@ class userPannelState extends State<userPannel> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          drawer: Drawer(
-              child: Container(
-            margin: const EdgeInsets.only(left: 12.3, right: 12.3),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 35,
-                ),
-                drawer(phonenumber: widget.phonenumber,)
-              ],
-            ),
-          )),
           body: Container(
             child: _widgetOptions.elementAt(selectedIndex!),
           ),

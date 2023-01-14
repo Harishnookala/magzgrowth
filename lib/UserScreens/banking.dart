@@ -171,7 +171,14 @@ class _BankingState extends State<Banking> {
                     ),
                   );
                 }
-                return CircularProgressIndicator();
+                return Center(child: Container(
+                  margin: EdgeInsets.only(top: 12.3,bottom: 12.3),
+                  child: Text("-- No bank details added-----",style: TextStyle(color: Colors.red,
+                   fontWeight: FontWeight.w400,
+                   fontFamily: "Poppins",
+                   fontSize: 16
+                  ),),
+                ),);
               }),
 
         ],
