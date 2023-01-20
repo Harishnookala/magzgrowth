@@ -1,6 +1,7 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:magzgrowth/UserScreens/payments.dart';
 import 'package:magzgrowth/UserScreens/withdraw.dart';
@@ -44,6 +45,7 @@ class HomeState extends State<Home> {
     return Container(
       child: ListView(
         shrinkWrap: true,
+
         children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -261,7 +263,7 @@ class HomeState extends State<Home> {
             var total = get_total(portfolio);
             return Container(
               margin: EdgeInsets.only(bottom: 5.6),
-              child: Text("₹ " + total.toString(),style: TextStyle(color: Colors.indigo,
+              child: Text( total.toString(),style: TextStyle(color: Colors.indigo,
                   fontSize: 16.2,
                   letterSpacing: 0.6,
                   fontFamily: "Poppins-Medium"
@@ -303,7 +305,8 @@ class HomeState extends State<Home> {
             },
             child:Text("  Investment", style: TextStyle  (
                 color: Colors.white,
-                fontSize: 15,
+                fontSize: 15.8,
+                letterSpacing: 0.6,
                 fontFamily: "Poppins-Medium"),),
           ),
           TextButton(
@@ -315,12 +318,29 @@ class HomeState extends State<Home> {
               backgroundColor: Colors.orange.shade900,
             ),
             onPressed: ()  async {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => withdraw(
-                          phonenumber: widget.phonenumber,)));
+              var data = await authentication.get_investments(widget.phonenumber!);
+              if(data!=null){
+                List values =[];
+                List value = data.get("Portfolio");
+                List enddate = data.get("endDate");
+                var firstdate = enddate[0];
+                var firstvalue = value[0];
+                values.add(firstvalue);
+                values.add(firstdate);
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                    withdraw(phonenumber: widget.phonenumber,
+                      values: values,data: firstvalue,
+                    )));
+
+              }
+             else{
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                    withdraw(phonenumber: widget.phonenumber,)));
+
+              }
             },
             child:  Text("Withdrawl",
-              style: TextStyle(color: Colors.white, fontSize: 15,
+              style: TextStyle(color: Colors.white, fontSize: 15.8,
                   letterSpacing: 0.6, fontFamily: "Poppins-Medium"),
             ),
           ),
@@ -335,10 +355,11 @@ class HomeState extends State<Home> {
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.requireData!.exists) {
           var gains = snapshot.data;
-          var profits = gains!.get("Profit");
+          var value = gains!.get("Profit").toStringAsFixed(2);
+          var profits = authentication.get_format(value);
           return Row(
             children: [
-              Text("₹ " + profits.toString(),style: TextStyle(color: Colors.indigo,
+              Text(profits.toString(),style: TextStyle(color: Colors.indigo,
                   fontSize: 16.2,
                   letterSpacing: 0.6,
                   fontFamily: "Poppins-Medium"
@@ -352,7 +373,6 @@ class HomeState extends State<Home> {
   }
 
   build_portfolio() {
-
     Authentication authentication = Authentication();
     return Container(
       margin: EdgeInsets.only(right: 9.3),
@@ -369,33 +389,36 @@ class HomeState extends State<Home> {
                   List endDate = data.get("endDate");
                  return Column(
                    children: [
-                     Divider(thickness: 1.0,color: Colors.grey),
+                     Divider(thickness: 1.0,color: Colors.black54,),
                      Row(
                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                        children: [
                          Container(
                            child: Text("Start Date", style: TextStyle(
-                               color: Colors.black,
+                               color: Colors.indigo,
                                fontSize: 15,
+                               fontStyle: FontStyle.italic,
                                letterSpacing: 0.6,
-                               fontFamily: "Poppins-Light")),
+                               fontFamily: "Poppins")),
                          ),
                          Container(child: Text("Invest Amount", style: TextStyle(
-                             color: Colors.black,
+                             color: Colors.indigo,
                              fontSize: 15,
+                             fontStyle: FontStyle.italic,
                              letterSpacing: 0.6,
-                             fontFamily: "Poppins-Light")),),
+                             fontFamily: "Poppins")),),
                          Container(
                            child: Text("End Date", style: TextStyle(
-                               color: Colors.black,
+                               color: Colors.indigo,
+                               fontStyle: FontStyle.italic,
                                fontSize: 15,
                                letterSpacing: 0.6,
-                               fontFamily: "Poppins-Light")),
+                               fontFamily: "Poppins")),
                          ),
 
                        ],
                      ),
-                     Divider(thickness: 1.0,color: Colors.grey),
+                     Divider(thickness: 1.0,color: Colors.black54,),
 
                      Container(
                        child:ListView.builder(
@@ -414,10 +437,10 @@ class HomeState extends State<Home> {
                                     fontFamily: "Poppins"
                                   ),
                                  ),),
-                                 Container(child: Text("₹ "+investAmount[index],
+                                 Container(child: Text(authentication.get_format(investAmount[index]),
                                    style: TextStyle(color: Colors.deepPurple,
                                        letterSpacing: 0.5,
-                                       fontSize: 15.8,
+                                       fontSize: 15.3,
                                        fontWeight: FontWeight.w500,
                                        fontFamily: "Poppins-Medium"
                                    ),
@@ -464,11 +487,14 @@ class HomeState extends State<Home> {
   get_total(DocumentSnapshot<Object?>? portfolio) {
     List values = portfolio!.get("Portfolio");
     double total = 0.0;
-     for(int i=0;i<values.length;i++){
-       total = total+ double.parse(values[i]);
-     }
-    return total;
+    for(int i=0;i<values.length;i++){
+      total = total+ double.parse(values[i]);
+    }
+    var format = NumberFormat.currency(symbol: "₹ ");
+    return format.format(total);
   }
+
+
 
 
  

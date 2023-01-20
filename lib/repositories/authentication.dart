@@ -185,15 +185,7 @@ class Authentication {
      }
      return profits;
   }
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
   Future<DocumentSnapshot?> get_invests(String? username) async {
     var id;
     var investments =
@@ -245,5 +237,8 @@ class Authentication {
     }
   }
 
- 
+  String get_format(String?investAmount) {
+    var indiaFormat = NumberFormat.currency(symbol: "₹ ");
+    return indiaFormat.format(double.parse(investAmount!)).toString();
+  }
 }
