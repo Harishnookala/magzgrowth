@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:back_button_interceptor/back_button_interceptor.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -395,22 +399,19 @@ class HomeState extends State<Home> {
                        children: [
                          Container(
                            child: Text("Start Date", style: TextStyle(
-                               color: Colors.indigo,
+                               color: Colors.purple,
                                fontSize: 15,
-                               fontStyle: FontStyle.italic,
                                letterSpacing: 0.6,
                                fontFamily: "Poppins")),
                          ),
                          Container(child: Text("Invest Amount", style: TextStyle(
-                             color: Colors.indigo,
+                             color: Colors.purple,
                              fontSize: 15,
-                             fontStyle: FontStyle.italic,
                              letterSpacing: 0.6,
                              fontFamily: "Poppins")),),
                          Container(
                            child: Text("End Date", style: TextStyle(
-                               color: Colors.indigo,
-                               fontStyle: FontStyle.italic,
+                               color: Colors.purple,
                                fontSize: 15,
                                letterSpacing: 0.6,
                                fontFamily: "Poppins")),
@@ -426,12 +427,15 @@ class HomeState extends State<Home> {
                          shrinkWrap: true,
                          itemCount: investAmount.length,
                          itemBuilder: (context,index){
+
+                           var startdate = authentication.get_dateformat(startDate[index]);
+                           var enddate = authentication.get_dateformat(endDate[index]);
                            return Container(
                              margin: EdgeInsets.only(bottom: 14.6,top: 12.3),
                              child: Row(
                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                children: [
-                                 Container(child: Text(startDate[index],
+                                 Container(child: Text(startdate,
                                   style: TextStyle(color: Colors.black,
                                    letterSpacing: 0.5,
                                     fontFamily: "Poppins"
@@ -445,7 +449,7 @@ class HomeState extends State<Home> {
                                        fontFamily: "Poppins-Medium"
                                    ),
                                  )),
-                                 Container(child: Text(endDate[index],
+                                 Container(child: Text(enddate,
                                    style: TextStyle(color: Colors.black,
                                        letterSpacing: 0.5,
                                        fontFamily: "Poppins"
@@ -460,12 +464,15 @@ class HomeState extends State<Home> {
                    ],
                  );
                }else if(!snapshot.hasData){
-                 return Container(
-                   margin: EdgeInsets.only(top: 18.3),
-                   alignment: Alignment.center,
-                   child: Text("---  No Portfolio's Yet  ---",style: TextStyle(
-                   color: Colors.deepOrange,
-                 ),),);
+                 return Center(
+                   heightFactor: 5.3,
+                   child: Container(
+                     margin: EdgeInsets.only(top: 18.3),
+                     alignment: Alignment.center,
+                     child: Text("---  No Portfolio's Yet  ---",style: TextStyle(
+                     color: Colors.deepOrange,
+                   ),),),
+                 );
                }return CircularProgressIndicator();
             },
           ),
@@ -481,7 +488,6 @@ class HomeState extends State<Home> {
     for(int i=0;i<profits!.length;i++){
       total = total + profits[i].get("Profit");
     }return total;
-
   }
 
   get_total(DocumentSnapshot<Object?>? portfolio) {
@@ -493,6 +499,8 @@ class HomeState extends State<Home> {
     var format = NumberFormat.currency(symbol: "₹ ");
     return format.format(total);
   }
+
+
 
 
 

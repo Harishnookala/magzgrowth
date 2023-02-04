@@ -241,4 +241,10 @@ class Authentication {
     var indiaFormat = NumberFormat.currency(symbol: "₹ ");
     return indiaFormat.format(double.parse(investAmount!)).toString();
   }
+  get_dateformat(startDate) {
+    Timestamp dt = startDate;
+    var timestamp = DateTime.fromMillisecondsSinceEpoch(dt.millisecondsSinceEpoch);
+    var dateformat = DateFormat('dd/MM/yyy').format(timestamp);
+    return dateformat;
+  }
 }

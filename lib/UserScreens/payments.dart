@@ -19,6 +19,8 @@ class payments extends StatefulWidget {
 }
 
 class paymentsstate extends State<payments> {
+  var _locale = 'Hi';
+  String _formatNumber(String s) => NumberFormat.decimalPattern(_locale).format(int.parse(s));
   bool inprogress = false;
   bool pressed = true;
   final formKey = GlobalKey<FormState>();
@@ -46,6 +48,7 @@ class paymentsstate extends State<payments> {
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
+    print(response.message);
     // Do something when payment fails
   }
 
@@ -55,11 +58,11 @@ class paymentsstate extends State<payments> {
 
   @override
   Widget build(BuildContext context) {
-    var amount = creditController.text + '00';
-    print(amount);
+    String amount = creditController.text + '00';
+    String value = amount.replaceAll(",", "");
     var options = {
       'key': 'rzp_test_NNbwJ9tmM0fbxj',
-      'amount': amount.toString(),
+      'amount': value,
       'name': 'Shaiq',
       'description': 'Payment',
       'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
@@ -93,7 +96,7 @@ class paymentsstate extends State<payments> {
                 margin: EdgeInsets.only(top: 5.6, left: 12.3),
               ),
               SizedBox(
-                height: 30,
+                height: 10,
               ),
               Container(
                 margin: EdgeInsets.all(13.3),
@@ -124,7 +127,7 @@ class paymentsstate extends State<payments> {
                       ),
                     ),
                     SizedBox(
-                      height: 20,
+                      height: 5,
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width / 1.2,
@@ -132,9 +135,17 @@ class paymentsstate extends State<payments> {
                         margin: const EdgeInsets.only(
                             top: 5.8, left: 6.3, bottom: 14.3),
                         child: TextFormField(
+                          style: TextStyle(color: Colors.indigo,fontFamily: "Poppins",fontSize: 17),
+                          onChanged: (string) {
+                            string = '${_formatNumber(string.replaceAll(',', ''))}';
+                            creditController.value = TextEditingValue(
+                              text: string,
+                              selection: TextSelection.collapsed(offset: string.length),
+                            );
+                          },
                           keyboardType: TextInputType.number,
                           validator: (amount) {
-                            if (amount!.isEmpty || !amount.isNum) {
+                            if (amount!.isEmpty) {
                               return 'Please enter Amount';
                             }
                             return null;
@@ -144,6 +155,7 @@ class paymentsstate extends State<payments> {
                                   horizontal: 10, vertical: 20),
                               prefixIcon: Icon(
                                 Icons.currency_rupee_outlined,
+                                color: Colors.purple,
                                 size: 20,
                               ),
                               focusedBorder: const OutlineInputBorder(
@@ -175,25 +187,26 @@ class paymentsstate extends State<payments> {
                       children: [
                         TextButton(
                           style: TextButton.styleFrom(
-                              minimumSize: const Size(280, 50),
+                              minimumSize: const Size(180, 50),
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.8)),
+                                  borderRadius: BorderRadius.circular(25.8)),
                               backgroundColor: Colors.green),
                           onPressed: () async {
-                            setState(() {
-                              var amount = double.parse(creditController.text);
-                              if (amount >= 2) {
-                                pressed = true;
-                              } else {
-                                pressed = false;
-                                inprogress = false;
-                              }
-                            });
-                            if (formKey.currentState!.validate() && pressed) {
+                            if (formKey.currentState!.validate()) {
                               setState(() {
-                                inprogress = true;
+                                String str = creditController.text;
+                                str = str.replaceAll(",", "");
+                                double amount = double.parse(str);
+                                if (amount >=5000) {
+                                  pressed = true;
+                                  inprogress =true;
+                                  razorpay.open(options);
+                                } else {
+                                  pressed = false;
+                                  inprogress = false;
+                                }
                               });
-                              razorpay.open(options);
+
                             }
                           },
                           child: const Text(
@@ -218,7 +231,7 @@ class paymentsstate extends State<payments> {
                     ),
                     pressed == true
                         ? const Text("")
-                        : Text("Minimum amount of investment is 10,000 ")
+                        : Text("Minimum amount of investment is 5,000 ")
                   ],
                 ),
               ),
@@ -233,20 +246,18 @@ class paymentsstate extends State<payments> {
      var users = await authentication.users(widget.phonenumber);
      DateTime startDate = DateTime.now();
      DateTime endDate = DateTime.now().add(Duration(days: 90));
-     String formatendDate = DateFormat('dd-MM-yyy').format(endDate);
-     String formatstartDate = DateFormat('dd-MM-yyy').format(startDate);
      if (invests != null) {
+       String value = creditController.text;
+       String amount = value.replaceAll(",", "");
        List values = invests.get("Portfolio");
        List startdate = invests.get("startDate");
-       List endDate = invests.get("endDate");
-       values.add(double.parse(creditController.text));
-       startdate.add(formatstartDate);
-       endDate.add(formatendDate);
+       List enddate = invests.get("endDate");
+       values.add(amount);
+       startdate.add(startDate);
+       enddate.add(endDate);
        Map<String,dynamic>data={
-         "username": users!.get("Name"),
-         "phonenumber": users.get("mobilenumber"),
          "Portfolio":values,
-         "endDate":endDate,
+         "endDate":enddate,
          "startDate":startdate
        };
        await FirebaseFirestore.instance
@@ -257,16 +268,20 @@ class paymentsstate extends State<payments> {
            MaterialPageRoute(
              builder: (context) => userPannel(phonenumber: widget.phonenumber),
            ));
-     } else {
+     }else {
+       String amount = creditController.text;
+       String value = amount.replaceAll(",", "");
        Map<String, dynamic> data = {
          "username": users!.get("Name"),
          "phonenumber": users.get("mobilenumber"),
          "Portfolio": [
-           double.parse(creditController.text),
+           value
          ],
-         "endDate": [formatendDate],
-         "startDate": [formatstartDate],
+         "endDate": [endDate],
+         "startDate": [startDate],
+         "type":"Credit",
        };
+       print(data);
        await FirebaseFirestore.instance
            .collection("razor_investments")
            .add(data);

@@ -216,29 +216,9 @@ class ProfitspageState extends State<Profitspage> {
                   borderRadius: BorderRadius.circular(12.8)),
               backgroundColor: Colors.green),
           onPressed: () async {
-            var profits = await authentication.get_profit(widget.phonenumber);
+            var  profits = await authentication.get_profit(widget.phonenumber);
             setState(()  {
-              if(formKey.currentState!.validate()){
-                inprogress=true;
-                double amount = double.parse(debitController.text);
-                if(amount>=500.0){
-                  inprogress=true;
-                  if(profits!=null){
-                    var amount = profits.get("Profit");
-                    double totalAmount = amount-double.parse(debitController.text);
-                    Map<String,dynamic>data={
-                      "Profit":totalAmount
-                    };
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (BuildContext context) => userPannel(phonenumber: widget.phonenumber,)));
-                    FirebaseFirestore.instance.collection("Profit").doc(profits.id).update(data);
-                  }
-                }else{
-                  inprogress =false;
-                  pressed = false;
-                }
-                
-              }
+              withdraw_profit(profits);
             });
           },
           child: const Text(
@@ -255,6 +235,31 @@ class ProfitspageState extends State<Profitspage> {
 
       ],
     );
+  }
+
+   withdraw_profit(DocumentSnapshot<Object?> profits) {
+    if(formKey.currentState!.validate()){
+      inprogress=true;
+      double amount = double.parse(debitController.text);
+        if(profits.exists){
+          var profit = profits.get("Profit");
+          if(profit>=amount){
+            inprogress=true;
+          double totalAmount = profit-amount;
+          Map<String,dynamic>data={
+            "Profit":totalAmount
+          };
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (BuildContext context) => userPannel(phonenumber: widget.phonenumber,)));
+          FirebaseFirestore.instance.collection("Profit").doc(profits.id).update(data);
+        }
+
+      }else{
+        inprogress = false;
+        pressed = false;
+      }
+
+    }
   }
 
 }

@@ -33,18 +33,20 @@ class _ProfileState extends State<Profile> {
   void _directUpdateImage(File? file) async {
     var details = await authentication.users(widget.phoneNumber);
 
-    if (file == null) return;
     setState(() {
-      _profilePicFile = file;
-      image = authentication.moveToStorage(_profilePicFile, details!.get("Name"), "Profile");
+      if (file == null) return ;
+      setState(() {
+        _profilePicFile = file;
+        image = authentication.moveToStorage(_profilePicFile, details!.get("Name"), "Profile");
+      });
     });
-     if(image!=null){
-       image = await image;
-       Map<String,dynamic> images ={
-         "image":image,
-       };
-       await FirebaseFirestore.instance.collection("Users").doc(details!.id.toString()).update(images);
-     }
+    if(image!=null){
+      image = await image;
+      Map<String,dynamic> images ={
+        "image":image,
+      };
+      await FirebaseFirestore.instance.collection("Users").doc(details!.id.toString()).update(images);
+    }
   }
   @override
   void initState() {
@@ -55,6 +57,7 @@ class _ProfileState extends State<Profile> {
   }
   @override
   Widget build(BuildContext context) {
+    print(image);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.purple.shade300,
@@ -110,7 +113,8 @@ class _ProfileState extends State<Profile> {
                 margin:EdgeInsets.only(right:12.3),
                 child: EditableImage(
                   onChange: (file) => _directUpdateImage(file),
-                  image: details!.get("image")!=null?Image.network(details.get("image",),fit: BoxFit.cover,):null,
+                  image: details!.get("image")!=null?Image.network(details.get("image",),
+                    fit: BoxFit.cover,):Image.asset("assets/Images/play_store.png"),
                   size: 80.0,
                   imagePickerTheme: ThemeData(
                     primaryColor: Colors.white,

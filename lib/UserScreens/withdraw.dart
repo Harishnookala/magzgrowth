@@ -43,7 +43,8 @@ class _withdrawState extends State<withdraw> {
   int? index_value =0;
   List? values;
   bool check = false;
-
+  var validate;
+  var validation;
   _withdrawState({this.id, this.data, this.values});
   @override
   Widget build(BuildContext context) {
@@ -52,31 +53,28 @@ class _withdrawState extends State<withdraw> {
             child: Column(
               children: [
                 SizedBox(height: 30,),
-                Container(
-                  alignment: Alignment.topLeft,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Icon(
-                          Icons.arrow_back_ios_new_outlined,
-                          color: Colors.brown,
-                          size: 23,
-                        ),
-                        Container(
-                            margin: EdgeInsets.only(left: 2.3),
-                            child: Text("Back",style: TextStyle(color: Colors.brown,fontSize: 16,
-                                fontFamily: "Poppins",
-                                letterSpacing: 0.5
-                            ),))
-                      ],
+                    Container(
+                      alignment: Alignment.topLeft,
+                      child: Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Icon(
+                              Icons.arrow_back_ios_new_outlined,
+                              color: Colors.brown,
+                            ),
+                          ),
+                          Container(child: Text("Back",style: TextStyle(color: Colors.brown,
+                           fontSize: 16
+                          ),),)
+                        ],
+                      ),
+                      margin: EdgeInsets.only(top: 5.6, left: 12.3),
                     ),
-                  ),
-                  margin: EdgeInsets.only(top: 5.6,bottom: 12.3, left: 12.3),
-                ),
+
+
                         DefaultTabController(
                             length: 2,
                             child: Expanded(
@@ -202,8 +200,25 @@ class _withdrawState extends State<withdraw> {
             SizedBox(height: 25,),
             build_portfolio(),
           build_field(),
+          SizedBox(height: 10,),
           build_button(),
 
+          pressed == false
+              ? Container(
+            margin: EdgeInsets.only(top: 5.3,bottom: 5.3),
+            alignment: Alignment.center,
+            child: Text(
+              "Available amount is greater than Debit Amount",
+              style: TextStyle(color: Colors.red,fontSize: 15),
+            ),)
+              : Text(""),
+          validation==false?Container(
+            margin: EdgeInsets.only(bottom: 5.3),
+            alignment: Alignment.center,
+            child: Text(
+              "Three Months locking period",
+              style: TextStyle(color: Colors.red,fontSize: 15),
+            ),):Container(),
           SizedBox(height: 20,),
         ],
       ),
@@ -286,6 +301,7 @@ class _withdrawState extends State<withdraw> {
                     shrinkWrap: true,
                     itemCount: investAmount.length,
                     itemBuilder: (context, index) {
+                      var enddate= authentication.get_dateformat(endDate![index]);
                       return Container(
                         alignment: Alignment.topLeft,
                         margin: EdgeInsets.only(bottom: 12.3),
@@ -309,7 +325,7 @@ class _withdrawState extends State<withdraw> {
                                     ),
                                     Container(
                                       child: Text(
-                                        endDate![index].toString(),
+                                        enddate,
                                         style: TextStyle(
                                             color: Colors.black,
                                             letterSpacing: 0.5,
@@ -330,7 +346,7 @@ class _withdrawState extends State<withdraw> {
                                       values=[];
                                       values!.add(data);
                                       index_value = index;
-                                      values!.add(endDate![index].toString());
+                                      values!.add(endDate![index]);
                                     }
                                   });
                                 },
@@ -426,12 +442,6 @@ class _withdrawState extends State<withdraw> {
               ],
             ),
           ),
-          pressed == false
-              ? Text(
-            "Available amount is greater than Debit Amount",
-            style: TextStyle(color: Colors.red),
-          )
-              : Text(""),
         ],
       ),
     );
@@ -475,47 +485,59 @@ class _withdrawState extends State<withdraw> {
   }
   add_data(String date, double debit_amount) async {
     var data = await authentication.get_investments(widget.phonenumber!);
-    if (check == false) {
-      double amount = double.parse(values![0]);
-      if (amount >= debit_amount) {
-        setState(() {
-          inprogress = true;
-          pressed = true;
-          double after_withdraw = amount - debit_amount;
-          List listofvalues = data!.get("Portfolio");
-          listofvalues[index_value!] = after_withdraw.toString();
-          Map<String, dynamic>updatedata = {
-            "Portfolio": listofvalues
-          };
-          FirebaseFirestore.instance.collection("razor_investments").doc(
-              data.id).update(updatedata);
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  userPannel(phonenumber: widget.phonenumber,)));
-        });
-      } else {
-        inprogress = false;
-        pressed = false;
-      }
-    } else {
-      double amount = double.parse(values![0]);
-      if (amount >= debit_amount) {
-        setState(() {
-          inprogress = true;
-          pressed = true;
-          double after_withdraw = amount - debit_amount;
-          List listofvalues = data!.get("Portfolio");
-          listofvalues[index_value!] = after_withdraw.toString();
-          Map<String, dynamic>updatedata = {
-            "Portfolio": listofvalues
-          };
-          FirebaseFirestore.instance.collection("razor_investments").doc(
-              data.id).update(updatedata);
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  userPannel(phonenumber: widget.phonenumber,)));
-        });
-      }
+    if(check==false){
+      validation = get_data(validate,debit_amount,data);
+    }
+    else{
+       validation = get_data(validate, debit_amount, data);
     }
   }
+
+   get_data(validate, double debit_amount, DocumentSnapshot<Object?>? data) {
+    double amount = double.parse(values![0]);
+    DateTime dateTime = DateTime.now();
+    Timestamp dt = values![1];
+    var timestamp = DateTime.fromMillisecondsSinceEpoch(dt.millisecondsSinceEpoch);
+    DateTime dt1 = DateTime.parse(dateTime.toString());
+    DateTime dt2 = DateTime.parse(timestamp.toString());
+
+    if(dt1.compareTo(dt2) == 0 || dt1.compareTo(dt2) > 0){
+      if (amount >= debit_amount) {
+        setState(() {
+          inprogress = true;
+          double after_withdraw = amount - debit_amount;
+          List listofvalues = data!.get("Portfolio");
+          listofvalues[index_value!] = after_withdraw.toString();
+          Map<String, dynamic>updatedata = {
+            "Portfolio": listofvalues
+          };
+          Map<String,dynamic>withdraw={
+            "withdrawAmount":debit_amount.toString(),
+            "transaction_date":dt1,
+            "phonenumber":widget.phonenumber,
+            "type": "Debit",
+            "transaction":"pending",
+          };
+
+          FirebaseFirestore.instance.collection("razor_investments").doc(
+              data.id).update(updatedata);
+          FirebaseFirestore.instance.collection("withdrawls").add(withdraw);
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  userPannel(phonenumber: widget.phonenumber,)));
+        });
+      }else{
+        setState(() {
+          validate=false;
+        });
+      }
+    }else{
+      setState(() {
+        validate=false;
+      });
+    }
+    return validate;
+  }
+
+
 }
