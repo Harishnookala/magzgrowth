@@ -50,14 +50,11 @@ class _ProfileState extends State<Profile> {
   }
   @override
   void initState() {
-    color=false;
-    print(color);
     // TODO: implement initState
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
-    print(image);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.purple.shade300,
@@ -80,10 +77,10 @@ class _ProfileState extends State<Profile> {
         ),
       ),
       body: Container(
-        color: Colors.white,
         margin: EdgeInsets.all(12.3),
-          child: SingleChildScrollView(
-            child: Column(children: [
+          child: ListView(
+            shrinkWrap: true,
+            children: [
                       FutureBuilder<DocumentSnapshot?>(
                         future: authentication.users(phoneNumber),
                         builder: (context,snapshot){
@@ -98,7 +95,7 @@ class _ProfileState extends State<Profile> {
                SizedBox(height: 10,),
                build_buttons(authentication),
       ]),
-          )),
+      ),
     );
   }
 
@@ -128,7 +125,7 @@ class _ProfileState extends State<Profile> {
                   Container(
                     child: Text(details.get("Name"),
                         style: TextStyle(color: Colors.black,
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.w500,
                             fontSize: 16,
                             fontFamily: "Poppins"
                         )),
@@ -137,8 +134,8 @@ class _ProfileState extends State<Profile> {
                     child: Text(details.get("mobilenumber"),
                         style: TextStyle(color: Colors.black,
                             fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                            fontFamily: "Poppins"
+                            fontSize: 15,
+                            fontFamily: "Poppins-Medium"
                         )),
                   ),
                 ],
@@ -156,10 +153,9 @@ class _ProfileState extends State<Profile> {
     return Column(
       children: [
         Container(
-            color: color==false?Colors.white:Colors.grey.shade400,
           child: TextIcon(
-            leading: Icon(Icons.dataset_linked_sharp,color: Colors.black,),
-            title: Text("e-Kyc ",style: TextStyle(fontFamily: "Poppins",fontWeight: FontWeight.w500)),
+            leading: Icon(Icons.dataset_linked_sharp,color: Colors.black,size: 28),
+            title: Text("e-Kyc ",style: TextStyle(fontFamily: "Poppins",fontSize:17,fontWeight: FontWeight.w500)),
             onTap: () async{
               var details = await authentication.kyc_details(phoneNumber);
               if(details!=null){
@@ -174,14 +170,12 @@ class _ProfileState extends State<Profile> {
                             kyc(phonenumber: phoneNumber,)));
               }
               pressed =true;
-
-
             },
           ),
         ),
         TextIcon(
-          leading: Icon(Icons.account_balance,color: Colors.black),
-          title: Text("Bank details",style: TextStyle(fontFamily: "Poppins",fontWeight: FontWeight.w500)),
+          leading: Icon(Icons.account_balance,color: Colors.black,size: 28),
+          title: Text("Bank details",style: TextStyle(fontFamily: "Poppins",fontSize:17,fontWeight: FontWeight.w500)),
           onTap: ()async{
             var details = await authentication.users(phoneNumber);
             var bank = await authentication.bank_inf(phoneNumber);
@@ -199,8 +193,8 @@ class _ProfileState extends State<Profile> {
           },
         ),
         TextIcon(
-            leading: Icon(Icons.person_add_alt_outlined,color: Colors.black,),
-            title: Text("Add Nominee",style: TextStyle(fontFamily: "Poppins",fontWeight: FontWeight.w500)),
+            leading: Icon(Icons.person_add_alt_outlined,color: Colors.black,size: 28),
+            title: Text("Add Nominee",style: TextStyle(fontFamily: "Poppins",fontSize:17,fontWeight: FontWeight.w500)),
             onTap: ()async{
               var details = await authentication.nominee(widget.phoneNumber);
 
@@ -218,25 +212,25 @@ class _ProfileState extends State<Profile> {
             }
         ),
         TextIcon(
-          leading: Icon(Icons.task_alt,color: Colors.black),
-          title: Text("Terms & conditions",style: TextStyle(fontFamily: "Poppins",fontWeight: FontWeight.w500)),
+          leading: Icon(Icons.task_alt,color: Colors.black,size: 28),
+          title: Text("Terms & conditions",style: TextStyle(fontFamily: "Poppins",fontSize:17,fontWeight: FontWeight.w500)),
           onTap: (){
 
           },
         ),
         TextIcon(
-          leading: Icon(Icons.lock_clock_outlined,color: Colors.black,),
-          title: Text("Privacy Policy",style: TextStyle(fontFamily: "Poppins",fontWeight: FontWeight.w500)),
+          leading: Icon(Icons.lock_clock_outlined,color: Colors.black,size: 28),
+          title: Text("Privacy Policy",style: TextStyle(fontFamily: "Poppins",fontSize:17,fontWeight: FontWeight.w500)),
           onTap: () {
 
           },
         ),
 
         TextIcon(
-          leading: Icon(Icons.logout_rounded,color: Colors.black,),
-          title: Text("Logout",style: TextStyle(fontFamily: "Poppins",fontWeight: FontWeight.w500,
+          leading: Icon(Icons.logout_rounded,color: Colors.black,size: 28),
+          title: Text("Logout",style: TextStyle(fontFamily: "Poppins",fontSize:17,fontWeight: FontWeight.w500,
               letterSpacing: 0.6,
-              fontSize: 16)),
+              )),
           onTap: () async {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             await prefs.clear();

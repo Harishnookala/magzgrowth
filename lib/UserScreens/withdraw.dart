@@ -52,7 +52,7 @@ class _withdrawState extends State<withdraw> {
           body: Container(
             child: Column(
               children: [
-                SizedBox(height: 30,),
+                SizedBox(height: 35,),
                     Container(
                       alignment: Alignment.topLeft,
                       child: Row(
@@ -71,10 +71,8 @@ class _withdrawState extends State<withdraw> {
                           ),),)
                         ],
                       ),
-                      margin: EdgeInsets.only(top: 5.6, left: 12.3),
+                      margin: EdgeInsets.only(top: 8.6, left: 15.3,bottom: 8.3),
                     ),
-
-
                         DefaultTabController(
                             length: 2,
                             child: Expanded(
@@ -160,7 +158,7 @@ class _withdrawState extends State<withdraw> {
                 ),
               child: Container(
                 alignment: Alignment.centerRight,
-                height: MediaQuery.of(context).size.height/6.3,
+                height: MediaQuery.of(context).size.height/8.3,
                 width: MediaQuery.of(context).size.width/2.0,
                 margin: const EdgeInsets.only(left: 12.3),
                 child: Column(
@@ -390,7 +388,7 @@ class _withdrawState extends State<withdraw> {
             child: Column(
               children: [
                 SizedBox(
-                  width: 300,
+                  width: MediaQuery.of(context).size.width/1.2,
                   child: Container(
                     margin: const EdgeInsets.only(
                         top: 5.8, left: 12.3, right: 12.3),
@@ -450,33 +448,36 @@ class _withdrawState extends State<withdraw> {
     return Row(
      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        TextButton(
-          style: TextButton.styleFrom(
-              minimumSize: const Size(160, 50),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.8)),
-              backgroundColor: Colors.green),
-          onPressed: () async {
-            DateTime todaydate = DateTime.now();
-            var date = DateFormat("dd-MM-yyy").format(todaydate);
+        Container(
+          margin: EdgeInsets.only(top: 8.3),
+          child: TextButton(
+            style: TextButton.styleFrom(
+                minimumSize: const Size(160, 50),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.8)),
+                backgroundColor: Colors.green),
+            onPressed: () async {
+              DateTime todaydate = DateTime.now();
+              var date = DateFormat("dd-MM-yyy").format(todaydate);
 
-            setState(() {
-              if(formKey.currentState!.validate()){
-                String str = debitController.text;
-                str = str.replaceAll(",", "");
-                double debit_amount = double.parse(str);
-                add_data(date,debit_amount);
-              }
-            });
-          },
-          child: const Text(
-            "Withdrawl",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                letterSpacing: 0.9,
-                fontWeight: FontWeight.w900,
-                fontFamily: "Poppins-Medium"),
+              setState(() {
+                if(formKey.currentState!.validate()){
+                  String str = debitController.text;
+                  str = str.replaceAll(",", "");
+                  double debit_amount = double.parse(str);
+                  add_data(date,debit_amount);
+                }
+              });
+            },
+            child: const Text(
+              "Withdrawl",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  letterSpacing: 0.9,
+                  fontWeight: FontWeight.w900,
+                  fontFamily: "Poppins-Medium"),
+            ),
           ),
         ),
         inprogress?Container(child: CircularProgressIndicator(),):Container(),
